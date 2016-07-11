@@ -1,0 +1,41 @@
+{
+        "start_state" : "standing",
+	"states": [
+		{
+			"name": "standing",
+			"description": "Standing still",
+			"transitions": [ 
+				{
+					"mask": "turn.*",
+					"new_state": "standing"
+				}, 
+				{
+					"mask": "start",
+					"new_state": "moving",
+					"output_messages": [
+						{
+							"target": "global_notify",
+							"message": "movment started"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "moving",
+			"description": "The robot is moving",
+			"transitions": [ 
+				{
+					"mask": "stop",
+					"new_state": "standing",
+					"output_messages": [
+						{
+							"target": "global_notify",
+							"message": "movment ended"
+						}
+					]
+				}
+			]
+		}
+	]
+}	
