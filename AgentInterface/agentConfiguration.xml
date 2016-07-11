@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<agent_interface agent_name="Demo agent">
+    <!---
+    <state name="first_state" description="First state">
+        <transition mask="A" new_state="first_state">
+            <output_message target="other" message="message_A1" />
+            <output_message target="other" message="message_A2" />
+        </transition>
+        <transition mask="B" new_state="second_state">
+            <output_message target="other" message="message_B1" />
+        </transition>
+    </state>
+    -->
+    
+    <state name="second_state" description="Second state">
+        <transition mask="C" new_state="first_state">
+            <output_message target="other" message="message_C1" />
+            <output_message target="other" message="message_C2" />
+        </transition>
+    </state>
+    
+    
+    
+</agent_interface>
