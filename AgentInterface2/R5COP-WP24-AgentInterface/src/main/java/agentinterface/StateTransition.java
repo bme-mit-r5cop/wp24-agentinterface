@@ -5,6 +5,9 @@ package agentinterface;
 
 
 import java.util.regex.Pattern;
+
+import acl.AcceptedPattern;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
@@ -27,7 +30,7 @@ public class StateTransition {
     private ArrayList<OutputMessage> outputMessages = new ArrayList<OutputMessage>();
     
     // The priority of the transition / mask
-    private int pririty = 0;
+    private int priority = 0;
     
     
     /**
@@ -40,7 +43,7 @@ public class StateTransition {
     public StateTransition(String mask, State newState, int priority) {
         this.mask = mask;
         this.newState = newState;
-        this.pririty = priority;
+        this.priority = priority;
         
         // Compile the pattern
         maskPattern = Pattern.compile(mask);
@@ -100,7 +103,7 @@ public class StateTransition {
      * @return					The priority value
      */
     public int getPriorty() {
-    	return pririty;
+    	return priority;
     }
     
     
@@ -110,6 +113,11 @@ public class StateTransition {
      * @param priority			The new priority value
      */
     public void setPriority(int priority) {
-    	this.pririty = priority;
+    	this.priority = priority;
+    }
+    
+    
+    public AcceptedPattern getPattern() {
+    	return new AcceptedPattern(mask, priority);
     }
 }

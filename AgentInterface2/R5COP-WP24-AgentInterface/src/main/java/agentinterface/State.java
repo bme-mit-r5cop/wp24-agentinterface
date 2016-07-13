@@ -6,6 +6,8 @@ package agentinterface;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import acl.AcceptedPattern;
+
 
 /**
  *	Class holding stat parameters
@@ -17,7 +19,10 @@ public class State {
     private String stateName = "";
     
     // Valid transitions from this state
-    private ArrayList<StateTransition> transitions = null;
+    private ArrayList<StateTransition> transitions = new ArrayList<StateTransition>();
+    
+    // Valid transitions from this state
+    private ArrayList<AcceptedPattern> patterns = new ArrayList<AcceptedPattern>();
 
     
     /**
@@ -27,7 +32,6 @@ public class State {
      */
     public State(String stateName) {
         this.stateName = stateName;
-        transitions = new ArrayList<StateTransition>();
     }
     
     
@@ -38,6 +42,7 @@ public class State {
      */
     public void addTransition(StateTransition transition) {
         transitions.add(transition);
+        patterns.add(transition.getPattern());
     }
     
     
@@ -96,8 +101,8 @@ public class State {
      * 
      * @return					The list of transitions
      */
-    public ArrayList<StateTransition> getTransitions() {
-    	ArrayList<StateTransition> copy = new ArrayList<StateTransition>(transitions);
+    public ArrayList<AcceptedPattern> getPatterns() {
+    	ArrayList<AcceptedPattern> copy = new ArrayList<AcceptedPattern>(patterns);
     	return copy;
     }
 }

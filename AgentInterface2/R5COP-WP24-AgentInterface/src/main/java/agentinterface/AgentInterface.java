@@ -383,7 +383,7 @@ public class AgentInterface extends AbstractNodeMain{
     	
     	// Clear and update reuseable subscribeMessage
     	subscribeMessage.clearPatterns();
-    	subscribeMessage.updatePatternList(currentState.getTransitions());
+    	subscribeMessage.updatePatternList(currentState.getPatterns());
     	
     	// Send the message
     	std_msgs.String str = speechRecognitionRegisterPublisher.newMessage();

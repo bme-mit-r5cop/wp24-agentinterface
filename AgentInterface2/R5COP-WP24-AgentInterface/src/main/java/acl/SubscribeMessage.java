@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import agentinterface.StateTransition;
-
 /**
  * Class for assembling and handling a subscribe message for the VoiceAgent to apply for 
  * recognized sentences that fit the set masks
@@ -23,7 +21,7 @@ public class SubscribeMessage extends ACLMessage {
 	private String recognitionTopic = "";
 	
 	// The accepted patterns to subscribe for
-	private ArrayList<StateTransition> acceptedPatterns = new ArrayList<StateTransition>();
+	private ArrayList<AcceptedPattern> acceptedPatterns = new ArrayList<AcceptedPattern>();
 	
 	
 	/**
@@ -105,7 +103,7 @@ public class SubscribeMessage extends ACLMessage {
 	 * @param priority					The priority
 	 */
 	public void addAcceptedPattern(String regexp, int priority) {
-		acceptedPatterns.add(new StateTransition(regexp, null, priority));
+		acceptedPatterns.add(new AcceptedPattern(regexp, priority));
 	}
 	
 	
@@ -114,7 +112,7 @@ public class SubscribeMessage extends ACLMessage {
 	 * 
 	 * @param pattern					The pattern to add
 	 */
-	public void addAcceptedPattern(StateTransition pattern) {
+	public void addAcceptedPattern(AcceptedPattern pattern) {
 		acceptedPatterns.add(pattern);
 	}
 	
@@ -132,7 +130,7 @@ public class SubscribeMessage extends ACLMessage {
 	 *  
 	 * @param transitions				The valid transitions to load patterns from
 	 */
-	public void updatePatternList(ArrayList<StateTransition> transitions) {
-		acceptedPatterns = transitions;
+	public void updatePatternList(ArrayList<AcceptedPattern> patterns) {
+		acceptedPatterns = patterns;
 	}
 }
