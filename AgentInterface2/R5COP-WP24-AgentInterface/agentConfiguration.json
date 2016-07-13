@@ -1,5 +1,6 @@
 {
-        "start_state" : "standing",
+	"agent_id" : "moving_test_agent_1",
+    "start_state" : "standing",
 	"states": [
 		{
 			"name": "standing",
@@ -11,10 +12,11 @@
 				}, 
 				{
 					"mask": "start",
+					"priority" : 0,
 					"new_state": "moving",
 					"output_messages": [
 						{
-							"target": "global_notify",
+							"target": "Text2Speech",
 							"message": "movment started"
 						}
 					]
@@ -30,8 +32,12 @@
 					"new_state": "standing",
 					"output_messages": [
 						{
-							"target": "global_notify",
+							"target": "Text2Speech",
 							"message": "movment ended"
+						},
+						{
+							"target": "Text2Speech",
+							"message": "movment ended again"
 						}
 					]
 				}

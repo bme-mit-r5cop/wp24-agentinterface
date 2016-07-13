@@ -40,7 +40,7 @@ public class Listener extends AbstractNodeMain {
   @Override
   public void onStart(ConnectedNode connectedNode) {	
     final Log log = connectedNode.getLog();
-    Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("Text2Speech", std_msgs.String._TYPE);
+    Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber("EP_Test", std_msgs.String._TYPE);
     subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
       @Override
       public void onNewMessage(std_msgs.String message) {

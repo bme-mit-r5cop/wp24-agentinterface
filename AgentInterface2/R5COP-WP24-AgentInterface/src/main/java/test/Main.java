@@ -8,7 +8,7 @@ import org.ros.node.DefaultNodeMainExecutor;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
-public class Main {
+public abstract class Main {
 
 	/**
 	 * A small example to start a ROS node.
@@ -19,9 +19,12 @@ public class Main {
 	 * 
 	 */
 	
-	public static void main(String[] args) {		
+	public static NodeConfiguration nodeConfiguration;
+	public static NodeMainExecutor nodeMainExecutor; 
+	
+	public static void init() {
 		URI rosMaster = URI.create("http://10.5.0.1:11311/");		
-		NodeConfiguration nodeConfiguration = null;
+		nodeConfiguration = null;
 		try {
 			java.net.Socket socket = new java.net.Socket(rosMaster.getHost(), rosMaster.getPort());
 			java.net.InetAddress local_network_address = socket.getLocalAddress();
@@ -32,11 +35,10 @@ public class Main {
 			e.printStackTrace();
 		}
         
-		NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
-	    
-		
-		//nodeMainExecutor.execute(new Talker(), nodeConfiguration);
-		nodeMainExecutor.execute(new Listener(), nodeConfiguration);
+		nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
 	}
+	
+	
+	
 
 }
