@@ -4,6 +4,8 @@
 
 package acl;
 
+import org.json.JSONException;
+
 /**
  * Class for handling recognized speech.
  * 
@@ -20,16 +22,16 @@ public class SpeechRecognitionMessage extends ACLMessage {
 	 * 
 	 * @param jsonString
 	 */
-	public SpeechRecognitionMessage (String jsonString) {
+	public SpeechRecognitionMessage (String jsonString) throws JSONException {
 		super(jsonString);
 		content = json.getString("content");
 	}
 	
 	
 	/**
-	 * SpeechRecognitionMessage constructor from skretch
+	 * SpeechRecognitionMessage constructor from scratch
 	 * 
-	 * @param sender		The sander node
+	 * @param sender		The sender node
 	 * @param target		The target topic
 	 * @param content		The sentence said by the user
 	 */

@@ -7,8 +7,32 @@
 			"description": "Standing still",
 			"transitions": [ 
 				{
-					"mask": "turn.*",
-					"new_state": "standing"
+					"mask": "turn left",
+					"new_state": "standing",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "turning left"
+						},
+						{
+							"target": "RobotControl",
+							"message": "turn left"
+						}
+					]
+				}, 
+				{
+					"mask": "turn right",
+					"new_state": "standing",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "turning right"
+						},
+						{
+							"target": "RobotControl",
+							"message": "turn right"
+						}
+					]
 				}, 
 				{
 					"mask": "start",
@@ -17,7 +41,11 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "movment started"
+							"message": "moving forward"
+						},
+						{
+							"target": "RobotControl",
+							"message": "start"
 						}
 					]
 				}
@@ -33,11 +61,11 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "movment ended"
+							"message": "robot stopped"
 						},
 						{
-							"target": "Text2Speech",
-							"message": "movment ended again"
+							"target": "RobotControl",
+							"message": "stop"
 						}
 					]
 				}

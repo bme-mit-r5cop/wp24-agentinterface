@@ -1,5 +1,6 @@
 package acl;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;
@@ -12,7 +13,7 @@ public abstract class ACLMessage {
 	
 	public abstract String toJson();
 	
-	public ACLMessage(String jsonString) {
+	public ACLMessage(String jsonString) throws JSONException {
 		json = new JSONObject(jsonString);
 		
 		type = json.getString("type");

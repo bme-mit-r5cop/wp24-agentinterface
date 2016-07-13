@@ -4,6 +4,8 @@
 
 package acl;
 
+import org.json.JSONException;
+
 /**
  * Class for sending and receiving Text2Speech messages
  * 
@@ -19,7 +21,7 @@ public class Text2SpeechMessage extends ACLMessage {
 	 * 
 	 * @param jsonString				The JSON string to load from
 	 */
-	public Text2SpeechMessage (String jsonString) {
+	public Text2SpeechMessage (String jsonString) throws JSONException {
 		super(jsonString);
 		text = json.getString("text");
 	}

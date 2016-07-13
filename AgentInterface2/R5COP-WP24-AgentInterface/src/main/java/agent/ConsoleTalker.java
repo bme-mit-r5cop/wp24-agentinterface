@@ -43,7 +43,7 @@ public class ConsoleTalker extends AbstractNodeMain{
 	Publisher<std_msgs.String> publisher;
 	
 	// The topic to send text input to
-	private static final String topicName = "moving_test_agent_1_speech_recognition";
+	private static String topicName = "moving_test_agent_1_speech_recognition";
 	
 	
 	/**

@@ -7,6 +7,7 @@ package acl;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -29,11 +30,12 @@ public class SubscribeMessage extends ACLMessage {
 	 * 
 	 * @param jsonString			The JSON string to load
 	 */
-	public SubscribeMessage(String jsonString) {
+	public SubscribeMessage(String jsonString) throws JSONException {
 		// Load the standard message fields
 		super(jsonString);
 		
 		// Load all accepted patterns
+		recognitionTopic = json.getString("recognition_topic");
 		JSONArray patternArray = json.getJSONArray("accepted_patterns");
         JSONObject patternObject = null;
         for (int i = 0; i < patternArray.length(); i++) {
@@ -60,14 +62,16 @@ public class SubscribeMessage extends ACLMessage {
 	 * Convert into JSON string representation
 	 */
 	public String toJson() {
-		String content = "  accepted_patterns : [\n";
-		
+		String content = "  recognition_topic : \""+recognitionTopic+"\",\n"
+					   + "  accepted_patterns : [\n";
 		for (int i=0; i<acceptedPatterns.size(); i++) {
 			content = content 
 					+ "    {\n"
 					+ "      regexp : \""+acceptedPatterns.get(i).getMask()+"\",\n"
 					+ "      priority : \""+acceptedPatterns.get(i).getPriorty()+"\"\n"
-					+ "    },\n";
+					+ "    }";
+			if (i<acceptedPatterns.size()-1) content = content + ",";
+			content = content + "\n";
 					
 		}
 		
@@ -93,6 +97,11 @@ public class SubscribeMessage extends ACLMessage {
 	 */
 	public String getRecognitionTopic() {
 		return recognitionTopic;
+	}
+
+
+	public ArrayList<AcceptedPattern> getAcceptedPatterns() {
+		return acceptedPatterns;
 	}
 	
 	
@@ -128,7 +137,7 @@ public class SubscribeMessage extends ACLMessage {
 	/**
 	 * Update pattern list based on transition list
 	 *  
-	 * @param transitions				The valid transitions to load patterns from
+	 * @param patterns				The valid transitions to load patterns from
 	 */
 	public void updatePatternList(ArrayList<AcceptedPattern> patterns) {
 		acceptedPatterns = patterns;
