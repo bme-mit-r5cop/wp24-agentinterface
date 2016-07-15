@@ -12,11 +12,11 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "turning left"
+							"message": "Robot turning left."
 						},
 						{
-							"target": "RobotControl",
-							"message": "turn left"
+							"target": "robot_control",
+							"message": "turn_left"
 						}
 					]
 				}, 
@@ -26,11 +26,11 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "turning right"
+							"message": "Robot turning right."
 						},
 						{
-							"target": "RobotControl",
-							"message": "turn right"
+							"target": "robot_control",
+							"message": "turn_right"
 						}
 					]
 				}, 
@@ -41,10 +41,10 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "moving forward"
+							"message": "Starting robot."
 						},
 						{
-							"target": "RobotControl",
+							"target": "robot_control",
 							"message": "start"
 						}
 					]
@@ -61,10 +61,10 @@
 					"output_messages": [
 						{
 							"target": "Text2Speech",
-							"message": "robot stopped"
+							"message": "Stopping robot."
 						},
 						{
-							"target": "RobotControl",
+							"target": "robot_control",
 							"message": "stop"
 						}
 					]
