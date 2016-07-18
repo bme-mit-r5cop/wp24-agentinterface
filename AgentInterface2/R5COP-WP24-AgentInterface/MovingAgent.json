@@ -1,0 +1,32 @@
+{
+	"agent_id" : "moving_test_agent_1",
+    "start_state" : "standing",
+	"states": [
+		{
+			"name": "standing",
+			"transitions": [ 
+				{
+					"mask": "turn left",
+					"trigger" : "turn_left"
+				}, 
+				{
+					"mask": "turn right",
+					"trigger" : "turn_right"
+				}, 
+				{
+					"mask": "start",
+					"trigger" : "start"
+				}
+			]
+		},
+		{
+			"name": "moving",
+			"transitions": [ 
+				{
+					"mask": "stop",
+					"trigger" : "stop"
+				}
+			]
+		}
+	]
+}	

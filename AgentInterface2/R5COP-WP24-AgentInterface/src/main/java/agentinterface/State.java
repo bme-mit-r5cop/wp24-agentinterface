@@ -19,7 +19,7 @@ public class State {
     private String stateName = "";
     
     // Valid transitions from this state
-    private ArrayList<StateTransition> transitions = new ArrayList<StateTransition>();
+    private ArrayList<Transition> transitions = new ArrayList<Transition>();
     
     // Valid transitions from this state
     private ArrayList<AcceptedPattern> patterns = new ArrayList<AcceptedPattern>();
@@ -40,7 +40,7 @@ public class State {
      * 
      * @param transition				The transition to add	
      */
-    public void addTransition(StateTransition transition) {
+    public void addTransition(Transition transition) {
         transitions.add(transition);
         patterns.add(transition.getPattern());
     }
@@ -66,11 +66,11 @@ public class State {
     public State getNewState(AgentInterface ai, String message) {
         // Search for a transition to fire
         for (int i=0;i<transitions.size();i++) {
-            StateTransition transition = transitions.get(i);
+            Transition transition = transitions.get(i);
             
             // Check if this transition can be fired
             if (transition.canFire(message)) {
-            	State newState = transition.fire(ai); 
+            	State newState = transition.fire(ai, message); 
             	if (newState != null) {
             		// State changed
             		return newState;

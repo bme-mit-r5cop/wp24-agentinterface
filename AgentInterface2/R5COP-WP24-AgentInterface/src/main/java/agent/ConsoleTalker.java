@@ -122,7 +122,7 @@ public class ConsoleTalker extends AbstractNodeMain{
 					publisher.publish(str);
 					
 					// Terminate on "exit" command and shutdown ROS node properly
-					if (command.equals("exit")) {
+					if (command.equals("cexit")) {
 		            	connectedNode.shutdown();
 		            	System.exit(0);
 		            }

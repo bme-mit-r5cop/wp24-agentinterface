@@ -29,9 +29,11 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 import org.ros.node.AbstractNodeMain;
 
+import acl.ManagementMessage;
 import acl.SpeechRecognitionMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
+import agent.AbstractAgent;
 
 
 /**
@@ -72,7 +74,13 @@ public class AgentInterface extends AbstractNodeMain{
     // The register of the publishers used to send messages to different topics
     private HashMap<String,Publisher<std_msgs.String>> publishers = new HashMap<String,Publisher<std_msgs.String>>();
     
+    // The agent using this interface and to trigger event on
+    private AbstractAgent agent;
     
+    
+    /**
+     * Return the ROS node name of the agent
+     */
     public GraphName getDefaultNodeName() {
       return GraphName.of("r5cop_wp24_agentinterface/"+agentID+"_"+Math.round(1+10000*Math.random()));
     }
@@ -96,6 +104,18 @@ public class AgentInterface extends AbstractNodeMain{
         	  processSpeechRecognitionMessage(srm);
           }
         });
+        
+        Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("r5cop_magagement", std_msgs.String._TYPE);
+        managementSubscriber.addMessageListener(new MessageListener<std_msgs.String>() {
+          @Override
+          public void onNewMessage(std_msgs.String message) {
+        	  // Parse management messages
+              ManagementMessage mm = new ManagementMessage(message.getData());
+              
+              // Ask the agent to process the management message
+              agent.processAllManagementMessages(mm);
+          }
+        });
 
         
         // Register as publisher to SpeechRecognitionRegister topic to export command patterns
@@ -112,6 +132,9 @@ public class AgentInterface extends AbstractNodeMain{
 				}
 		});
         
+        // Init the agent's custom start method
+        agent.onStart(connectedNode);
+        
 
         // Export accepted masks for the starting state	
         exportCurrentMasks();
@@ -124,8 +147,12 @@ public class AgentInterface extends AbstractNodeMain{
      * 
      * @param rosURL				The ROS core URL
      * @param configFileName		The config file path
+     * @param agent					The agent running the interface
      */
-    public AgentInterface(String rosURL, String configFileName) {
+    public AgentInterface(String rosURL, String configFileName, AbstractAgent agent) {
+    	// Save agent
+    	this.agent = agent;
+    	
     	// Init ROS
         URI rosMaster = URI.create(rosURL);		
 		try {
@@ -189,6 +216,7 @@ public class AgentInterface extends AbstractNodeMain{
         // Reading again states to load transitions
         String mask = "";
         String newState = "";
+        String trigger = "";
         int priority;
         for (int stateIndex = 0; stateIndex < stateArray.length(); stateIndex++) {
             state = stateArray.getJSONObject(stateIndex);
@@ -209,7 +237,16 @@ public class AgentInterface extends AbstractNodeMain{
                     newState = transition.getString("new_state");
                 } catch (Exception e) {
                     // Keeping current state
-                    newState = state.getString("name");
+                	newState = state.getString("name");
+                }
+                
+                // Reading optional trigger
+                try {
+                    // Trigger present in config
+                    trigger = transition.getString("trigger");
+                } catch (Exception e) {
+                    // No trigger defined
+                	trigger = "";
                 }
                 
                 // Reading optional priority parameter
@@ -221,8 +258,15 @@ public class AgentInterface extends AbstractNodeMain{
                 }
                     
                 // Create new transition object
-                StateTransition transitionObject = new StateTransition(mask, stateMap.get(newState),priority);
-                log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
+                Transition transitionObject = null;
+                if (!trigger.equals("")) {
+                	transitionObject = new TriggerTransition(mask, priority, trigger);
+                	log("  - adding trigger with mask '"+mask+"' and code '"+trigger+"'");
+                } else {
+                	transitionObject = new StateTransition(mask, priority, stateMap.get(newState));
+                	log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
+                } 
+               
                     
                 // Read output messages specifications
                 try {
@@ -312,6 +356,17 @@ public class AgentInterface extends AbstractNodeMain{
     
     
     /**
+     * Send Text2Speech request to VoiceAgent
+     * 
+     * @param message				The message to say out loud
+     */
+    public void sendText2SpeechMessage(String message) {
+    	sendMessage("Text2Speech",message);
+    }
+
+    
+    
+    /**
      * Return publisher based on target topic or create new if no publisher existed yet
      * 
      * @param target				The target topic the publisher is needed for
@@ -326,6 +381,17 @@ public class AgentInterface extends AbstractNodeMain{
     		safeSleep(1000);
     	}
     	return p;
+    }
+    
+    
+    
+    /**
+     * Getter for connectedNode
+     * 
+     * @return						The connected node
+     */
+    public ConnectedNode getConnectedNode() {
+    	return connectedNode;
     }
     
     
@@ -410,5 +476,27 @@ public class AgentInterface extends AbstractNodeMain{
      */
     public State getCurrentState() {
     	return currentState;
+    }
+    
+    
+    /**
+     * Return the agent using this interface
+     *  
+     * @return							The agent using this interface
+     */
+    public AbstractAgent getAgent() {
+    	return agent;
+    }
+    
+    
+    
+    /**
+     * Return state based on state name specified
+     * 
+     * @param name						The state name
+     * @return							The state object 
+     */
+    public State getStateByName(String name) {
+    	return stateMap.get(name);
     }
 }
