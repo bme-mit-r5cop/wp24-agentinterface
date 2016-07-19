@@ -1,0 +1,35 @@
+{
+	"agent_id" : "battery_agent",
+    "start_state" : "waiting",
+	"states": [
+		{
+			"name": "waiting",
+			"description": "waiting state of the agent for a managemenet message to indicate low battery"
+		},
+		{
+			"name": "battery_low",
+			"description": "the battery is low and the agent has to ask the user what to do: wait or turn off?",
+			"init_message": "My batteries are low. What should I do? Turn off or wait for the batteries to recover?",
+			"transitions": [ 
+				{
+					"mask": "please wait",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Waiting for the batteries to recover."
+						}
+					]
+				},
+				{
+					"mask": "turn off",
+					"trigger" : "turn_off_trigger"
+				}
+			]
+		},
+		{
+			"name": "battery_charged",
+			"description": "the battery has been recharged",
+			"init_message": "My batteries are recharged. Resuming normal operation."
+		}
+	]
+}	

@@ -21,7 +21,7 @@ import agentinterface.State;
  */
 public abstract class AbstractAgent implements AgentLogicInterface {
 	// Configuration strings
-	private String rosURL, configFile = "";
+	private String rosURL, configFile, agentID = null;
 	
 	// AgentInterface
 	AgentInterface ai;
@@ -52,7 +52,7 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	 */
 	public void execute() {
 		// Create new AgentInterface
-		ai = new AgentInterface(rosURL,configFile, this);
+		ai = new AgentInterface(rosURL,configFile, this, agentID);
 		
 		// Execute the ROS node of AgentInterface
 		NodeMainExecutor nodeMainExecutor = DefaultNodeMainExecutor.newDefault();
@@ -69,7 +69,10 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	 * @param input					The user input firing the trigger
 	 * @return						The new state of the AgentInterface to move into
 	 */
-	public abstract State activateTrigger(AgentInterface ai, String code, String input);
+	public State activateTrigger(AgentInterface ai, String code, String input) {
+		System.out.println("No handler implemented for custom triggers, thus no state change is triggered by code '"+code+"'.");
+		return null;
+	}
 	
 	
 	/**
@@ -104,7 +107,9 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	 * AbstractAgent handleManagementMessages function
 	 * @param message
 	 */
-	public abstract void processUnhandledManagementMessages(ManagementMessage message);
+	public void processUnhandledManagementMessages(ManagementMessage message) {
+		System.out.println("No custom handler implemented for unhandled management messages, ignoring message: '"+message.getContent()+"'");
+	}
 	
 	
 	
@@ -114,5 +119,24 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	public void onStart(ConnectedNode connectedNode) {
 		System.out.println("Node connected to ROS.");
 	}
+	
+	
+    /**
+     * Setter for the agentID to be used when no config file is specified
+     * 
+     * @param agentID					The agent ID to use
+     */
+    public void setAgentID(String agentID) {
+    	this.agentID = agentID+"_"+Math.round((Math.random()*100000+1));
+    }
+    
+    
+    /**
+     * Terminate both the ROS node and the java application
+     */
+    public void terminate() {
+    	ai.getConnectedNode().shutdown();
+    	System.exit(0);
+    }
 
 }

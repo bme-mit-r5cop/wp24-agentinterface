@@ -7,6 +7,7 @@ package agent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import org.ros.concurrent.CancellableLoop;
@@ -20,8 +21,10 @@ import org.ros.node.NodeMainExecutor;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
+import acl.AcceptedPattern;
 import acl.SpeechRecognitionMessage;
 import acl.SubscribeMessage;
+import acl.Text2SpeechMessage;
 import agentinterface.AgentInterface;
 
 
@@ -43,7 +46,10 @@ public class ConsoleTalker extends AbstractNodeMain{
 	Publisher<std_msgs.String> publisher;
 	
 	// The topic to send text input to
-	private static String topicName = "moving_test_agent_1_speech_recognition";
+	private static String topicName = "battery_agent_speech_recognition"; 
+			//; 
+	// "how_are_you_agent_speech_recognition"
+	//"moving_test_agent_1_speech_recognition";
 	
 	
 	/**
@@ -135,10 +141,25 @@ public class ConsoleTalker extends AbstractNodeMain{
 			subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
 				@Override
 				public void onNewMessage(std_msgs.String message) {
-					System.err.println("Subscribe message received: ");
-					System.err.println("-------------------------------------------");
-					System.err.println(message.getData());
-					System.err.println("-------------------------------------------");
+					SubscribeMessage ssm = new SubscribeMessage(message.getData());
+					ArrayList<AcceptedPattern> pl = ssm.getAcceptedPatterns();
+					System.out.println("-------------------------------------------");
+					System.out.println("Subscription message received for the following patterns: ");
+					for (int i=0; i<pl.size(); i++) {
+						System.out.println(" - "+pl.get(i).getMask());	
+					}
+					System.out.print("> ");
+					
+				}
+		    });
+			
+			Subscriber<std_msgs.String> ttss = connectedNode.newSubscriber("Text2Speech", std_msgs.String._TYPE);
+			ttss.addMessageListener(new MessageListener<std_msgs.String>() {
+				@Override
+				public void onNewMessage(std_msgs.String message) {
+					Text2SpeechMessage tts = new Text2SpeechMessage(message.getData());
+					System.out.println("- - - > Saying out loud: "+tts.getText());
+					System.out.print("> ");
 				}
 		    });
 	}

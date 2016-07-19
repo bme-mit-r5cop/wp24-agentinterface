@@ -25,7 +25,9 @@ public abstract class Transition {
         this.priority = priority;
         
         // Compile the pattern
-        maskPattern = Pattern.compile(mask);
+        if (!mask.equals("")) {
+        	maskPattern = Pattern.compile(mask);
+        }
     }
     
     

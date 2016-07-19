@@ -1,4 +1,4 @@
-package movingagent;
+package demo_moving;
 
 import org.ros.node.ConnectedNode;
 import org.ros.node.topic.Publisher;

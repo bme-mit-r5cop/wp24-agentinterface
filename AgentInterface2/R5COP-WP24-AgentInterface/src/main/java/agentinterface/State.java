@@ -18,6 +18,9 @@ public class State {
 	// The ID of the state
     private String stateName = "";
     
+    // The init message to say when entering this state
+    private String initMessage = "";
+    
     // Valid transitions from this state
     private ArrayList<Transition> transitions = new ArrayList<Transition>();
     
@@ -30,8 +33,9 @@ public class State {
      * 
      * @param stateName					The name of the new state
      */
-    public State(String stateName) {
+    public State(String stateName, String initMessage) {
         this.stateName = stateName;
+        this.initMessage = initMessage;
     }
     
     
@@ -104,5 +108,14 @@ public class State {
     public ArrayList<AcceptedPattern> getPatterns() {
     	ArrayList<AcceptedPattern> copy = new ArrayList<AcceptedPattern>(patterns);
     	return copy;
+    }
+    
+    
+    /**
+     * Getter for initMessage
+     * @return					The message to say out loud when entering this state
+     */
+    public String getInitMessage() {
+    	return initMessage;
     }
 }

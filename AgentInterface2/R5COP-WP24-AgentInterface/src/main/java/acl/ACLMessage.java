@@ -14,6 +14,7 @@ public abstract class ACLMessage {
 	public abstract String toJson();
 	
 	public ACLMessage(String jsonString) throws JSONException {
+		System.err.println("Processing mesage: \n"+jsonString);
 		json = new JSONObject(jsonString);
 		
 		type = json.getString("type");

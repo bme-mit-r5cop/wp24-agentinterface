@@ -3,6 +3,7 @@ package test;
 import acl.SpeechRecognitionMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
+import demo.common.ProductDB;
 
 public class Test {
 
@@ -27,6 +28,8 @@ public class Test {
 		Text2SpeechMessage m2 = new Text2SpeechMessage(json);
 		
 		System.out.println(m2.toJson());*/
+		
+		ProductDB db = new ProductDB();
 	}
 
 }

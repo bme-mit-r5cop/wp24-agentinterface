@@ -1,0 +1,38 @@
+{
+	"agent_id" : "how_are_you_agent",
+    "start_state" : "state1",
+	"states": [
+		{
+			"name": "state1",
+			"transitions": [ 
+				{
+					"mask": "how are you",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Fine thanks."
+						}
+					]
+				},
+				{
+					"mask": "hello",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Hello."
+						}
+					]
+				},
+				{
+					"mask": ".*",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "I'm sorry I don't understand you."
+						}
+					]
+				}
+			]
+		}
+	]
+}	

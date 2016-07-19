@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.nio.file.Files;
@@ -23,17 +24,20 @@ import org.ros.internal.node.topic.SubscriberIdentifier;
 import org.ros.message.MessageListener;
 import org.ros.namespace.GraphName;
 import org.ros.node.ConnectedNode;
+import org.ros.node.Node;
 import org.ros.node.NodeConfiguration;
 import org.ros.node.topic.DefaultPublisherListener;
 import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 import org.ros.node.AbstractNodeMain;
 
+import acl.AcceptedPattern;
 import acl.ManagementMessage;
 import acl.SpeechRecognitionMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
 import agent.AbstractAgent;
+import demo.common.FileReader;
 
 
 /**
@@ -68,6 +72,9 @@ public class AgentInterface extends AbstractNodeMain{
     // The publisher used to register at the VoiceAgent
     Publisher<std_msgs.String> speechRecognitionRegisterPublisher;
     
+    // The publisher used to send management messages
+    Publisher<std_msgs.String> managemenetPublisher;
+    
     // The SubscribeMessage sent every time the subscription has to sent
     SubscribeMessage subscribeMessage;
     
@@ -85,6 +92,11 @@ public class AgentInterface extends AbstractNodeMain{
       return GraphName.of("r5cop_wp24_agentinterface/"+agentID+"_"+Math.round(1+10000*Math.random()));
     }
     
+    public void onShutdownComplete (Node node) {
+    	System.out.println("Terminating on ROS node shutdown.");
+    	System.exit(0);
+    }
+    
     
     /**
      * Init the ROS node 
@@ -93,19 +105,24 @@ public class AgentInterface extends AbstractNodeMain{
     	this.connectedNode = connectedNode;
     	    	
     	// Subscribe to agent's own speechRecognitionTopic
-        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(speechRecognitionTopic, std_msgs.String._TYPE);
-        subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
-          @Override
-          public void onNewMessage(std_msgs.String message) {
-        	  // Parse SRM
-              SpeechRecognitionMessage srm = new SpeechRecognitionMessage(message.getData());
-              
-              // Process SRM and change state based on content
-        	  processSpeechRecognitionMessage(srm);
-          }
-        });
+    	if (!speechRecognitionTopic.equals("")) {
+    		System.out.println("Subscribing to speech recognition topic: "+speechRecognitionTopic);
+	        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(speechRecognitionTopic, std_msgs.String._TYPE);
+	        subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
+	          @Override
+	          public void onNewMessage(std_msgs.String message) {
+	        	  // Parse SRM
+	              SpeechRecognitionMessage srm = new SpeechRecognitionMessage(message.getData());
+	              
+	              // Process SRM and change state based on content
+	        	  processSpeechRecognitionMessage(srm);
+	          }
+	        });
+    	} else {
+    		System.out.println("No speech recognition topic set to subscribe for.");
+    	}
         
-        Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("r5cop_magagement", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("r5cop_management", std_msgs.String._TYPE);
         managementSubscriber.addMessageListener(new MessageListener<std_msgs.String>() {
           @Override
           public void onNewMessage(std_msgs.String message) {
@@ -120,6 +137,7 @@ public class AgentInterface extends AbstractNodeMain{
         
         // Register as publisher to SpeechRecognitionRegister topic to export command patterns
     	speechRecognitionRegisterPublisher = connectedNode.newPublisher("SpeechRecognitionRegister", std_msgs.String._TYPE);
+    	managemenetPublisher = connectedNode.newPublisher("r5cop_management", std_msgs.String._TYPE);
     	// Wait for the publisher to get ready
         safeSleep(1000);
 
@@ -149,7 +167,7 @@ public class AgentInterface extends AbstractNodeMain{
      * @param configFileName		The config file path
      * @param agent					The agent running the interface
      */
-    public AgentInterface(String rosURL, String configFileName, AbstractAgent agent) {
+    public AgentInterface(String rosURL, String configFileName, AbstractAgent agent, String forceAgentID) {
     	// Save agent
     	this.agent = agent;
     	
@@ -166,133 +184,153 @@ public class AgentInterface extends AbstractNodeMain{
 		}
     	
         // Loading JSON file
-        File configFile = new File(configFileName);
-        if (!configFile.exists()) {
-            System.out.println("Invalid  configuration file: "+configFileName);
-            System.exit(-1);
-        } else {
-            log("Config file exists: "+configFileName);
-        }
-        
-        // Reading configuration file contents
-        String configContent = "";
-        try {
-            configContent = readFile(configFileName, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            System.out.println("Falied to read configuration file. Exiting. ");
-            System.exit(-1);
-        }
-        
-        // Prepare state map
-        stateMap = new HashMap<String,State>();
-        
-        // Parsing the JSON config
-        JSONObject json = new JSONObject(configContent);
-        
-        // Init agent id and related variables
-        agentID = json.getString("agent_id"); //+"___"+Math.round(Math.random()*100000+1);
-        speechRecognitionTopic = agentID+"_speech_recognition";
-        subscribeMessage = new SubscribeMessage(agentID, "SpeechRecognitionRegister", speechRecognitionTopic);
-        
-        // Loading empty states
-        log ("Loading states...");
-        JSONArray stateArray = json.getJSONArray("states");
-        JSONObject state = null;
-        String stateName = "";
-        for (int i = 0; i < stateArray.length(); i++)
-        {
-            // Read state
-            state = stateArray.getJSONObject(i);
-            stateName = state.getString("name");
-            
-            //Create state object
-            State currentState = new State(stateName);
-            
-            // Store state into the state map
-            stateMap.put(stateName, currentState);
-            log("State found in configuration: "+stateName);
-        }
-        
-        // Reading again states to load transitions
-        String mask = "";
-        String newState = "";
-        String trigger = "";
-        int priority;
-        for (int stateIndex = 0; stateIndex < stateArray.length(); stateIndex++) {
-            state = stateArray.getJSONObject(stateIndex);
-            stateName = state.getString("name");
-            log("Processing state transitions for "+stateName);
-            
-            // Read transitions under selected state
-            JSONArray transitionArray = state.getJSONArray("transitions");
-            for (int transitionIndex=0; transitionIndex<transitionArray.length(); transitionIndex++) {
-                JSONObject transition = transitionArray.getJSONObject(transitionIndex);
-
-                // Reading mandatory mask parameter
-                mask = transition.getString("mask");
-                    
-                // Reading optional new state parameter
-                try {
-                    // New state present in config
-                    newState = transition.getString("new_state");
-                } catch (Exception e) {
-                    // Keeping current state
-                	newState = state.getString("name");
-                }
-                
-                // Reading optional trigger
-                try {
-                    // Trigger present in config
-                    trigger = transition.getString("trigger");
-                } catch (Exception e) {
-                    // No trigger defined
-                	trigger = "";
-                }
-                
-                // Reading optional priority parameter
-                try {
-                    priority = transition.getInt("priority");
-                } catch (Exception e) {
-                    // Keeping current state
-                	priority = 0;
-                }
-                    
-                // Create new transition object
-                Transition transitionObject = null;
-                if (!trigger.equals("")) {
-                	transitionObject = new TriggerTransition(mask, priority, trigger);
-                	log("  - adding trigger with mask '"+mask+"' and code '"+trigger+"'");
-                } else {
-                	transitionObject = new StateTransition(mask, priority, stateMap.get(newState));
-                	log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
-                } 
-               
-                    
-                // Read output messages specifications
-                try {
-                    JSONArray messageArray = transition.getJSONArray("output_messages");
-                    for (int messageIndex=0; messageIndex<messageArray.length(); messageIndex++) {
-                        JSONObject message = messageArray.getJSONObject(messageIndex);
-                        String targetName = message.getString("target");
-                        String messageText = message.getString("message");
-
-                        transitionObject.addOutputMessage(targetName, messageText);
-                        log("    - adding output message to target '"+targetName+"' and content '"+messageText+"'");
-                    }
-                } catch (Exception e) {
-                    log("    - no output messages declared");
-                }
-                
-                stateMap.get(state.getString("name")).addTransition(transitionObject);
-            }
-        }
-        
-        // Reading starting state
-        String startStateName = json.getString("start_state");
-        log ("Starting state set to: "+startStateName);
-        currentState = stateMap.get(startStateName);
-        
-        log("Configuration processing ended.");
+		if (configFileName != null) {
+	        File configFile = new File(configFileName);
+	        if (!configFile.exists()) {
+	            System.out.println("Invalid  configuration file: "+configFileName);
+	            System.exit(-1);
+	        } else {
+	            log("Config file exists: "+configFileName);
+	        }
+	        
+	        // Reading configuration file contents
+	        String configContent = "";
+	        try {
+	            configContent = FileReader.readFile(configFileName, StandardCharsets.UTF_8);
+	        } catch (Exception e) {
+	            System.out.println("Falied to read configuration file. Exiting. ");
+	            System.exit(-1);
+	        }
+	        
+	        // Prepare state map
+	        stateMap = new HashMap<String,State>();
+	        
+	        // Parsing the JSON config
+	        JSONObject json = new JSONObject(configContent);
+	        
+	        // Init agent id and related variables
+	        agentID = json.getString("agent_id"); //+"___"+Math.round(Math.random()*100000+1);
+	        speechRecognitionTopic = agentID+"_speech_recognition";
+	        subscribeMessage = new SubscribeMessage(agentID, "SpeechRecognitionRegister", speechRecognitionTopic);
+	        
+	        // Loading empty states
+	        log ("Loading states...");
+	        JSONArray stateArray = json.getJSONArray("states");
+	        JSONObject state = null;
+	        String stateName = "";
+	        String initMessage = "";
+	        for (int i = 0; i < stateArray.length(); i++)
+	        {
+	            // Read state
+	            state = stateArray.getJSONObject(i);
+	            stateName = state.getString("name");
+	            
+	            try {
+	            	initMessage = state.getString("init_message");
+	            } catch (Exception e) {
+	            	initMessage = "";
+	            }
+	            
+	            //Create state object
+	            State currentState = new State(stateName, initMessage);
+	            
+	            // Store state into the state map
+	            stateMap.put(stateName, currentState);
+	            log("State found in configuration: "+stateName);
+	        }
+	        
+	        // Reading again states to load transitions
+	        String mask = "";
+	        String newState = "";
+	        String trigger = "";
+	        int priority;
+	        for (int stateIndex = 0; stateIndex < stateArray.length(); stateIndex++) {
+	            state = stateArray.getJSONObject(stateIndex);
+	            stateName = state.getString("name");
+	            log("Processing state transitions for "+stateName);
+	            
+	            // Read transitions under selected state
+	            try {
+		            JSONArray transitionArray = state.getJSONArray("transitions");
+		            for (int transitionIndex=0; transitionIndex<transitionArray.length(); transitionIndex++) {
+		                JSONObject transition = transitionArray.getJSONObject(transitionIndex);
+		
+		                // Reading mandatory mask parameter
+		                mask = transition.getString("mask");
+		                    
+		                // Reading optional new state parameter
+		                try {
+		                    // New state present in config
+		                    newState = transition.getString("new_state");
+		                } catch (Exception e) {
+		                    // Keeping current state
+		                	newState = state.getString("name");
+		                }
+		                
+		                // Reading optional trigger
+		                try {
+		                    // Trigger present in config
+		                    trigger = transition.getString("trigger");
+		                } catch (Exception e) {
+		                    // No trigger defined
+		                	trigger = "";
+		                }
+		                
+		                // Reading optional priority parameter
+		                try {
+		                    priority = transition.getInt("priority");
+		                } catch (Exception e) {
+		                    // Keeping current state
+		                	priority = 0;
+		                }
+		                    
+		                // Create new transition object
+		                Transition transitionObject = null;
+		                if (!trigger.equals("")) {
+		                	transitionObject = new TriggerTransition(mask, priority, trigger);
+		                	log("  - adding trigger with mask '"+mask+"' and code '"+trigger+"'");
+		                } else {
+		                	transitionObject = new StateTransition(mask, priority, stateMap.get(newState));
+		                	log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
+		                } 
+		               
+		                    
+		                // Read output messages specifications
+		                try {
+		                    JSONArray messageArray = transition.getJSONArray("output_messages");
+		                    for (int messageIndex=0; messageIndex<messageArray.length(); messageIndex++) {
+		                        JSONObject message = messageArray.getJSONObject(messageIndex);
+		                        String targetName = message.getString("target");
+		                        String messageText = message.getString("message");
+		
+		                        transitionObject.addOutputMessage(targetName, messageText);
+		                        log("    - adding output message to target '"+targetName+"' and content '"+messageText+"'");
+		                    }
+		                } catch (Exception e) {
+		                    log("    - no output messages declared");
+		                }
+		                
+		                stateMap.get(state.getString("name")).addTransition(transitionObject);
+		            }
+	            } catch (Exception e) {
+	            	log (" - no transitions defined for this state");
+	            }
+	        }
+	        
+	        // Reading starting state
+	        String startStateName = json.getString("start_state");
+	        log ("Starting state set to: "+startStateName);
+	        currentState = stateMap.get(startStateName);
+	        
+	        log("Configuration processing ended.");
+		} else {
+			log("No configuration file specified for the agent.");
+		}
+		
+		if (forceAgentID != null) {
+			agentID = forceAgentID;
+			log("AgentID forced to '"+agentID+"'.");
+		}
     }
     
     
@@ -304,20 +342,7 @@ public class AgentInterface extends AbstractNodeMain{
     public NodeConfiguration getNodeConfiguration() {
     	return nodeConfiguration;
     }
-    
-    
-    /**
-     * Read file into String
-     * 
-     * @param path					The file to read
-     * @param encoding				The encoding to use
-     * @return						The file content as String
-     * @throws IOException			Exception when something goes wrong
-     */
-    static String readFile(String path, Charset encoding) throws IOException {
-      byte[] encoded = Files.readAllBytes(Paths.get(path));
-      return new String(encoded, encoding);
-    }
+
     
     
     /**
@@ -414,12 +439,21 @@ public class AgentInterface extends AbstractNodeMain{
     		}
     	}
     	
+    	processSpeechRecognitionMessage(message.getContent());
+    }
+    
+    
+    /**
+     * Act on the contents of a speech recognition message
+     * 
+     * @param message				The string heard from the user
+     */
+    public void processSpeechRecognitionMessage(String message) {
     	// Change state if necessary
-        State newState = currentState.getNewState(this, message.getContent());
+        State newState = currentState.getNewState(this, message);
         if (!newState.equals(currentState)) {
         	changeState(newState);
         }
-       
     }
     
     
@@ -436,6 +470,14 @@ public class AgentInterface extends AbstractNodeMain{
     	System.out.println("New current state: "+currentState.getName());
     	System.out.println("-------------------------------------------");
     	
+    	// This state has an init message to say out loud
+        if (!newState.getInitMessage().equals("")) {
+        	System.out.println("Sending text to speech on new state init: "+newState.getName());
+    		sendText2SpeechMessage(newState.getInitMessage());
+    	} else {
+    		System.out.println("No init message set for new state: "+newState.getName());
+    	}
+    	
     	// Export masks
     	exportCurrentMasks();
     }
@@ -445,16 +487,20 @@ public class AgentInterface extends AbstractNodeMain{
      * Export valid masks for the current state
      */
     public void exportCurrentMasks() {
-    	System.out.println("Exporting masks.");
-    	
-    	// Clear and update reuseable subscribeMessage
-    	subscribeMessage.clearPatterns();
-    	subscribeMessage.updatePatternList(currentState.getPatterns());
-    	
-    	// Send the message
-    	std_msgs.String str = speechRecognitionRegisterPublisher.newMessage();
-		str.setData(subscribeMessage.toJson());
-		speechRecognitionRegisterPublisher.publish(str);
+    	if (subscribeMessage != null) {
+	    	System.out.println("Exporting masks: ");
+	    	ArrayList<AcceptedPattern> patterns = currentState.getPatterns();
+	    	for (int i=0; i<patterns.size(); i++) System.out.println(" - "+patterns.get(i).getMask());
+	    	
+	    	// Clear and update reuseable subscribeMessage
+	    	subscribeMessage.clearPatterns();
+	    	subscribeMessage.updatePatternList(currentState.getPatterns());
+	    	
+	    	// Send the message
+	    	std_msgs.String str = speechRecognitionRegisterPublisher.newMessage();
+			str.setData(subscribeMessage.toJson());
+			speechRecognitionRegisterPublisher.publish(str);
+    	}
     }
     
     
@@ -498,5 +544,18 @@ public class AgentInterface extends AbstractNodeMain{
      */
     public State getStateByName(String name) {
     	return stateMap.get(name);
+    }
+    
+    
+    /**
+     * Send managemenet message to all R5COP nodes in the system
+     * 
+     * @param content					The message content to send out
+     */
+    public void sendManagementMessage(String content) {
+    	ManagementMessage mm = new ManagementMessage(agentID,"r5cop_management",content);
+    	std_msgs.String str = managemenetPublisher.newMessage();
+    	str.setData(mm.toJson());
+    	managemenetPublisher.publish(str);
     }
 }

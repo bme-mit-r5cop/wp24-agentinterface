@@ -1,0 +1,67 @@
+{
+	"products": [
+		{	
+			"id" : "R5COP-1",
+			"name" : "ANGLAND",
+			"price" : "9.99",
+			"pos_x" : "0",
+			"pos_y" : "0" 
+		},
+		{
+			"id" : "R5COP-2",
+			"name" : "HEMNES",
+			"price" : "189.00",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-3",
+			"name" : "MALM",
+			"price" : "139.00",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-4",
+			"name" : "SKURAR",
+			"price" : "5.99",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-5",
+			"name" : "VARDAGEN",
+			"price" : "24.99",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-6",
+			"name" : "HIMMELSK",
+			"price" : "19.99",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-7",
+			"name" : "INBJUDANDE",
+			"price" : "1.49",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-8",
+			"name" : "BALUNGEN",
+			"price" : "6.99",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		},
+		{
+			"id" : "R5COP-9",
+			"name" : "TILLFALLE",
+			"price" : "129.00	",
+			"pos_x" : "0",
+			"pos_y" : "0"
+		}
+	]
+}

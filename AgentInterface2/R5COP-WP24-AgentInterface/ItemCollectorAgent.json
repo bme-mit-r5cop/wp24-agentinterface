@@ -1,0 +1,22 @@
+{
+	"agent_id" : "item_collector_agent",
+    "start_state" : "waiting_for_items",
+	"states": [
+		{
+			"name": "waiting_for_items"
+		},
+		{
+			"name": "waiting_for_start_collecting",
+			"transitions": [ 
+				{
+					"mask": "let's collect the items",
+					"trigger" : "start_collecting"
+				}
+			]
+		},
+		{
+			"name": "collecting",
+			"init_message" : "Please follow me to collect all the items on your shopping list."
+		}
+	]
+}	
