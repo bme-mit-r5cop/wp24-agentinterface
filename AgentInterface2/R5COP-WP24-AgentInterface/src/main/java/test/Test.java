@@ -1,9 +1,9 @@
 package test;
 
-import acl.SpeechRecognitionMessage;
-import acl.SubscribeMessage;
-import acl.Text2SpeechMessage;
-import demo.common.ProductDB;
+
+import demo.acl.Product;
+import demo.acl.ProductMessage;
+import demo.pickup_agent.PickupAgentDisplay;
 
 public class Test {
 
@@ -29,7 +29,21 @@ public class Test {
 		
 		System.out.println(m2.toJson());*/
 		
-		ProductDB db = new ProductDB();
+		//ProductDB db = new ProductDB();
+		
+		/*Product p = new Product("name","id","type",(float)100.1,800,600);
+		
+		ProductMessage pm = new ProductMessage("type", "sender", "target", p,"status");
+		
+		System.out.println(pm.toJson());
+
+		ProductMessage pm2 = new ProductMessage(pm.toJson());
+		
+		Product p2 = pm2.getProduct();
+		System.out.println(p2.getId());*/
+		
+		PickupAgentDisplay pd = new PickupAgentDisplay();
+		pd.setVisible(true);
 	}
 
 }

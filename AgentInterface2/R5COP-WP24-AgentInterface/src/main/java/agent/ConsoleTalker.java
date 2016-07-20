@@ -22,7 +22,7 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 
 import acl.AcceptedPattern;
-import acl.SpeechRecognitionMessage;
+import acl.GeneralMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
 import agentinterface.AgentInterface;
@@ -123,7 +123,7 @@ public class ConsoleTalker extends AbstractNodeMain{
 		            
 		            // Construct a new SpeechREcognitionMessage and send it to the target topic
 		            std_msgs.String str = publisher.newMessage();
-		            SpeechRecognitionMessage srm = new SpeechRecognitionMessage(getDefaultNodeName().toString(), topicName, command);
+		            GeneralMessage srm = new GeneralMessage(getDefaultNodeName().toString(), topicName, command);
 					str.setData(srm.toJson());
 					publisher.publish(str);
 					

@@ -8,7 +8,7 @@ import org.ros.node.ConnectedNode;
 import org.ros.node.DefaultNodeMainExecutor;
 import org.ros.node.NodeMainExecutor;
 
-import acl.ManagementMessage;
+import acl.GeneralMessage;
 import agentinterface.AgentInterface;
 import agentinterface.AgentLogicInterface;
 import agentinterface.State;
@@ -19,7 +19,7 @@ import agentinterface.State;
  * @author Peter Eredics
  *
  */
-public abstract class AbstractAgent implements AgentLogicInterface {
+public class AbstractAgent implements AgentLogicInterface {
 	// Configuration strings
 	private String rosURL, configFile, agentID = null;
 	
@@ -91,7 +91,7 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	 * 
 	 * @param message				The message to process
 	 */
-	public void processAllManagementMessages(ManagementMessage message) {
+	public void processAllManagementMessages(GeneralMessage message) {
 		if (message.getContent().equals("terminate")) {
 			System.out.println("Terminating on ManagementMessage: "+message.getContent());
 			ai.getConnectedNode().shutdown();
@@ -107,7 +107,7 @@ public abstract class AbstractAgent implements AgentLogicInterface {
 	 * AbstractAgent handleManagementMessages function
 	 * @param message
 	 */
-	public void processUnhandledManagementMessages(ManagementMessage message) {
+	public void processUnhandledManagementMessages(GeneralMessage message) {
 		System.out.println("No custom handler implemented for unhandled management messages, ignoring message: '"+message.getContent()+"'");
 	}
 	

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import demo.acl.Product;
+
 public class ProductDB {
 	private HashMap<String,Product> database = new HashMap<String,Product>();
 	
@@ -16,6 +18,7 @@ public class ProductDB {
 	
 	public ProductDB(String fileName) {
 		try {
+			System.out.println("Loading product DB.");
 			String fileContent = FileReader.readFile(fileName, StandardCharsets.UTF_8);
 			
 			JSONObject json = new JSONObject(fileContent);
@@ -29,6 +32,7 @@ public class ProductDB {
 					Product productObject = new Product(
 								product.getString("name"),
 								id,
+								product.getString("type"),
 								Float.valueOf(product.getString("price")),
 								Integer.valueOf(product.getString("pos_x")),
 								Integer.valueOf(product.getString("pos_y"))

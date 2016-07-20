@@ -1,6 +1,6 @@
 package demo_dummy;
 
-import acl.ManagementMessage;
+import acl.GeneralMessage;
 import agent.AbstractAgent;
 import agentinterface.AgentInterface;
 import agentinterface.State;
@@ -15,7 +15,7 @@ public class BatteryAgent extends AbstractAgent {
 		agent.execute();
 	}
 	
-	public void processUnhandledManagementMessages(ManagementMessage message) {
+	public void processUnhandledManagementMessages(GeneralMessage message) {
 		//ManagementMessage mm = new ManagementMessage(message.getContent());
 		
 		if (message.getContent().equals("battery_low")) {

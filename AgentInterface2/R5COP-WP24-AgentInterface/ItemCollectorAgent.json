@@ -15,8 +15,7 @@
 			]
 		},
 		{
-			"name": "collecting",
-			"init_message" : "Please follow me to collect all the items on your shopping list."
+			"name": "collecting"
 		}
 	]
 }	

@@ -8,16 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.apache.commons.logging.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.ros.internal.node.topic.SubscriberIdentifier;
@@ -31,9 +26,9 @@ import org.ros.node.topic.Publisher;
 import org.ros.node.topic.Subscriber;
 import org.ros.node.AbstractNodeMain;
 
+import acl.ACLMessage;
 import acl.AcceptedPattern;
-import acl.ManagementMessage;
-import acl.SpeechRecognitionMessage;
+import acl.GeneralMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
 import agent.AbstractAgent;
@@ -112,7 +107,7 @@ public class AgentInterface extends AbstractNodeMain{
 	          @Override
 	          public void onNewMessage(std_msgs.String message) {
 	        	  // Parse SRM
-	              SpeechRecognitionMessage srm = new SpeechRecognitionMessage(message.getData());
+	        	  GeneralMessage srm = new GeneralMessage(message.getData());
 	              
 	              // Process SRM and change state based on content
 	        	  processSpeechRecognitionMessage(srm);
@@ -127,7 +122,7 @@ public class AgentInterface extends AbstractNodeMain{
           @Override
           public void onNewMessage(std_msgs.String message) {
         	  // Parse management messages
-              ManagementMessage mm = new ManagementMessage(message.getData());
+        	  GeneralMessage mm = new GeneralMessage(message.getData());
               
               // Ask the agent to process the management message
               agent.processAllManagementMessages(mm);
@@ -196,7 +191,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        // Reading configuration file contents
 	        String configContent = "";
 	        try {
-	            configContent = FileReader.readFile(configFileName, StandardCharsets.UTF_8);
+	            configContent = FileReader.readFile(configFileName);
 	        } catch (Exception e) {
 	            System.out.println("Falied to read configuration file. Exiting. ");
 	            System.exit(-1);
@@ -409,6 +404,30 @@ public class AgentInterface extends AbstractNodeMain{
     }
     
     
+    /**
+     * Send the message content to the ROS topic as string
+     * 
+     * @param target				The ROS topic to send to	
+     * @param content				The content of the message
+     */
+    public void publishMessage(String target, String content) {
+    	Publisher<std_msgs.String> p = getPublisher(target);
+    	std_msgs.String str = p.newMessage();
+    	str.setData(content);
+    	p.publish(str);
+    }
+    
+    
+    /**
+     * Send ACL message to a ROS topic
+     * 
+     * @param target				The ROS topic to send to	
+     * @param message				The ACL message to send
+     */
+    public void publishMessage(String target, ACLMessage message) {
+    	publishMessage(target,message.toJson());
+    }
+    
     
     /**
      * Getter for connectedNode
@@ -425,7 +444,7 @@ public class AgentInterface extends AbstractNodeMain{
      * 
      * @param message				The received message containing the sentence.
      */
-    public void processSpeechRecognitionMessage(SpeechRecognitionMessage message) {
+    public void processSpeechRecognitionMessage(GeneralMessage message) {
     	System.out.println("-------------------------------------------");
     	System.out.println("Processing message: "+message.getContent());
     	System.out.println("-------------------------------------------");
@@ -553,7 +572,7 @@ public class AgentInterface extends AbstractNodeMain{
      * @param content					The message content to send out
      */
     public void sendManagementMessage(String content) {
-    	ManagementMessage mm = new ManagementMessage(agentID,"r5cop_management",content);
+    	GeneralMessage mm = new GeneralMessage(agentID,"r5cop_management",content);
     	std_msgs.String str = managemenetPublisher.newMessage();
     	str.setData(mm.toJson());
     	managemenetPublisher.publish(str);

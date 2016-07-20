@@ -5,11 +5,12 @@ import java.util.Iterator;
 
 import javax.swing.JFrame;
 
-import demo.common.Product;
+import demo.acl.Product;
 import demo.common.ProductDB;
 
 public class WarehouseDisplay extends JFrame {
 	private static WarehouseDisplay display;
+	public ProductDB db;
 
 	public static void main(String[] args) {
 		init();
@@ -20,24 +21,24 @@ public class WarehouseDisplay extends JFrame {
 		display.setVisible(true);
 	}
 	
-	public static void showFrame() {
-		display.setVisible(true);
+	public void showFrame() {
+		setVisible(true);
 	}
 	
-	public static void hideFrame() {
-		display.setVisible(false);
+	public void hideFrame() {
+		setVisible(false);
 	}
 	
 	public WarehouseDisplay() {
+		setLayout(new GridLayout(3,3));
+		db = new ProductDB();
+
 		setTitle("WarehouseDisplay");
 		setBounds(10,10, 1800, 900);
-		setLayout(new GridLayout(3,3));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
-		ProductDB db = new ProductDB();
-		
 		for (Product product : db.getDB().values()) {
-			WarehouseDisplayPanel panel = new WarehouseDisplayPanel(product);
+			WarehouseDisplayPanel panel = new WarehouseDisplayPanel(product,true);
 			add(panel);
 	    }
 	}

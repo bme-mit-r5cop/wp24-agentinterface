@@ -1,10 +1,8 @@
 package demo_dummy;
 
-import acl.ManagementMessage;
 import agent.AbstractAgent;
 import agentinterface.AgentInterface;
 import agentinterface.State;
-import demo_moving.MovingAgent;
 
 public class HowAreYouAgent extends AbstractAgent {
 	private static HowAreYouAgent agent;
