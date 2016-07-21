@@ -5,6 +5,7 @@
 			"name" : "ANGLAND",
 			"type" : "lamp",
 			"price" : "9.99",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0" 
 		},
@@ -13,15 +14,16 @@
 			"name" : "HEMNES",
 			"type" : "wardrobe",
 			"price" : "171.00",
+			"discount" : "10",
 			"pos_x" : "0",
-			"pos_y" : "0",
-			"discount" : "10"
+			"pos_y" : "0"
 		},
 		{
 			"id" : "R5COP-3",
 			"name" : "MALM",
 			"type" : "desk",
 			"price" : "139.00",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		},
@@ -30,6 +32,7 @@
 			"name" : "SKURAR",
 			"type" : "picture frame",
 			"price" : "5.99",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		},
@@ -38,6 +41,7 @@
 			"name" : "VARDAGEN",
 			"type" : "pot",
 			"price" : "24.99",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		},
@@ -46,6 +50,7 @@
 			"name" : "HIMMELSK",
 			"type" : "curtain",
 			"price" : "19.99",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		},
@@ -54,6 +59,7 @@
 			"name" : "INBJUDANDE",
 			"type" : "plate",
 			"price" : "1.49",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		},
@@ -62,15 +68,16 @@
 			"name" : "BALUNGEN",
 			"type" : "clothes peg",
 			"price" : "5.99",
+			"discount" : "15",
 			"pos_x" : "0",
-			"pos_y" : "0",
-			"discount" : "15"
+			"pos_y" : "0"
 		},
 		{
 			"id" : "R5COP-9",
 			"name" : "TILLFALLE",
 			"type" : "deck chair",
 			"price" : "129.00	",
+			"discount" : "0",
 			"pos_x" : "0",
 			"pos_y" : "0"
 		}

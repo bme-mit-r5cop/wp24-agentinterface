@@ -84,7 +84,7 @@ public class State {
         } 
          
         // Keep the current state
-        AgentInterface.log("No mask found for command '"+message+"' in state'"+stateName+"'.");
+        //AgentInterface.getAgent().log("No mask found for command '"+message+"' in state'"+stateName+"'.");
         return this;
     }
     

@@ -47,7 +47,6 @@ public class ROSDisplayPanel extends JPanel {
 	}
 	
 	public void reset() {
-		System.out.println("resettting panel");
 		area.setText("");
 	}
 	

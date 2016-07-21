@@ -16,8 +16,8 @@ public class PickupAgentDisplay extends JFrame{
 		setLayout(new GridLayout(3,3));
 		db = new ProductDB();
 		
-		setTitle("PickupAgentDisplay");
-		setBounds(10,10, 1800, 900);
+		setTitle("Step 2: Please find the box you need and read its QR code!");
+		setBounds(0,0, 1920, 1080);
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		
 		for (Product product : db.getDB().values()) {

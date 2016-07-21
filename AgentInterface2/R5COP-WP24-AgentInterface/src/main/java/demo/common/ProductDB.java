@@ -16,7 +16,15 @@ public class ProductDB {
 		this("ProductDB.json");
 	}
 	
+	public ProductDB(boolean discountOnly) {
+		this("ProductDB.json",discountOnly);
+	}
+	
 	public ProductDB(String fileName) {
+		this(fileName, false);
+	}
+	
+	public ProductDB(String fileName, boolean discountOnly) {
 		try {
 			System.out.println("Loading product DB.");
 			String fileContent = FileReader.readFile(fileName, StandardCharsets.UTF_8);
@@ -38,8 +46,15 @@ public class ProductDB {
 								Integer.valueOf(product.getString("pos_x")),
 								Integer.valueOf(product.getString("pos_y"))
 							);
-					
-					database.put(id, productObject);
+					if (discountOnly) {
+						// Add discounted items only
+						if (productObject.getDiscount()>0) {
+							database.put(id, productObject);
+						}
+					} else {
+						// Add all items
+						database.put(id, productObject);
+					}
 				} catch (Exception e) {
 					System.err.println("Failed to load product from JSON object: "+product.toString());
 				}

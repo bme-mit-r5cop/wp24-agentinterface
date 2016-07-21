@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,7 +90,7 @@ public class AgentInterface extends AbstractNodeMain{
     }
     
     public void onShutdownComplete (Node node) {
-    	System.out.println("Terminating on ROS node shutdown.");
+    	agent.log("Terminating on ROS node shutdown.");
     	System.exit(0);
     }
     
@@ -104,7 +103,7 @@ public class AgentInterface extends AbstractNodeMain{
     	    	
     	// Subscribe to agent's own speechRecognitionTopic
     	if (!speechRecognitionTopic.equals("")) {
-    		System.out.println("Subscribing to speech recognition topic: "+speechRecognitionTopic);
+    		agent.log("Subscribing to speech recognition topic: "+speechRecognitionTopic);
 	        Subscriber<std_msgs.String> subscriber = connectedNode.newSubscriber(speechRecognitionTopic, std_msgs.String._TYPE);
 	        subscriber.addMessageListener(new MessageListener<std_msgs.String>() {
 	          @Override
@@ -117,7 +116,7 @@ public class AgentInterface extends AbstractNodeMain{
 	          }
 	        });
     	} else {
-    		System.out.println("No speech recognition topic set to subscribe for.");
+    		agent.log("No speech recognition topic set to subscribe for.");
     	}
         
         Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("R5COP_Management", std_msgs.String._TYPE);
@@ -185,10 +184,10 @@ public class AgentInterface extends AbstractNodeMain{
 		if (configFileName != null) {
 	        File configFile = new File(configFileName);
 	        if (!configFile.exists()) {
-	            System.out.println("Invalid  configuration file: "+configFileName);
+	            agent.log("Invalid  configuration file: "+configFileName);
 	            System.exit(-1);
 	        } else {
-	            log("Config file exists: "+configFileName);
+	        	agent.log("Config file exists: "+configFileName);
 	        }
 	        
 	        // Reading configuration file contents
@@ -196,7 +195,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        try {
 	            configContent = FileReader.readFile(configFileName);
 	        } catch (Exception e) {
-	            System.out.println("Falied to read configuration file. Exiting. ");
+	            agent.log("Falied to read configuration file. Exiting. ");
 	            System.exit(-1);
 	        }
 	        
@@ -212,7 +211,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        subscribeMessage = new SubscribeMessage(agentID, "SpeechRecognitionRegister", speechRecognitionTopic);
 	        
 	        // Loading empty states
-	        log ("Loading states...");
+	        agent.log ("Loading states...");
 	        JSONArray stateArray = json.getJSONArray("states");
 	        JSONObject state = null;
 	        String stateName = "";
@@ -234,7 +233,7 @@ public class AgentInterface extends AbstractNodeMain{
 	            
 	            // Store state into the state map
 	            stateMap.put(stateName, currentState);
-	            log("State found in configuration: "+stateName);
+	            agent.log("State found in configuration: "+stateName);
 	        }
 	        
 	        // Reading again states to load transitions
@@ -245,7 +244,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        for (int stateIndex = 0; stateIndex < stateArray.length(); stateIndex++) {
 	            state = stateArray.getJSONObject(stateIndex);
 	            stateName = state.getString("name");
-	            log("Processing state transitions for "+stateName);
+	            agent.log("Processing state transitions for "+stateName);
 	            
 	            // Read transitions under selected state
 	            try {
@@ -286,10 +285,10 @@ public class AgentInterface extends AbstractNodeMain{
 		                Transition transitionObject = null;
 		                if (!trigger.equals("")) {
 		                	transitionObject = new TriggerTransition(mask, priority, trigger);
-		                	log("  - adding trigger with mask '"+mask+"' and code '"+trigger+"'");
+		                	agent.log("  - adding trigger with mask '"+mask+"' and code '"+trigger+"'");
 		                } else {
 		                	transitionObject = new StateTransition(mask, priority, stateMap.get(newState));
-		                	log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
+		                	agent.log("  - adding transition with mask '"+mask+"' and newState '"+newState+"'");
 		                } 
 		               
 		                    
@@ -302,32 +301,32 @@ public class AgentInterface extends AbstractNodeMain{
 		                        String messageText = message.getString("message");
 		
 		                        transitionObject.addOutputMessage(targetName, messageText);
-		                        log("    - adding output message to target '"+targetName+"' and content '"+messageText+"'");
+		                        agent.log("    - adding output message to target '"+targetName+"' and content '"+messageText+"'");
 		                    }
 		                } catch (Exception e) {
-		                    log("    - no output messages declared");
+		                	agent.log("    - no output messages declared");
 		                }
 		                
 		                stateMap.get(state.getString("name")).addTransition(transitionObject);
 		            }
 	            } catch (Exception e) {
-	            	log (" - no transitions defined for this state");
+	            	agent.log(" - no transitions defined for this state");
 	            }
 	        }
 	        
 	        // Reading starting state
 	        startStateName = json.getString("start_state");
-	        log ("Starting state set to: "+startStateName);
+	        agent.log ("Starting state set to: "+startStateName);
 	        currentState = stateMap.get(startStateName);
 	        
-	        log("Configuration processing ended.");
+	        agent.log("Configuration processing ended.");
 		} else {
-			log("No configuration file specified for the agent.");
+			agent.log("No configuration file specified for the agent.");
 		}
 		
 		if (forceAgentID != null) {
 			agentID = forceAgentID;
-			log("AgentID forced to '"+agentID+"'.");
+			agent.log("AgentID forced to '"+agentID+"'.");
 		}
     }
     
@@ -344,25 +343,13 @@ public class AgentInterface extends AbstractNodeMain{
     
     
     /**
-     * Log line into standard output
-     * 
-     * @param line					The line to print
-     */
-    public static void log(String line) {
-        if (!logging) return;
-        String timeStamp = new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime());
-        System.out.println("["+timeStamp+"] "+line);
-    }
-    
-    
-    /**
      * Send message through ROS
      * 
      * @param target				The target topic
      * @param message				The message to send
      */
     public void sendMessage(String target, String message) {
-    	System.out.println(" - - {"+target+"} - - > "+message);
+    	agent.log(" - - {"+target+"} - - > "+message);
     	Publisher<std_msgs.String> p = getPublisher(target);
     	std_msgs.String str = p.newMessage();
     	
@@ -448,9 +435,9 @@ public class AgentInterface extends AbstractNodeMain{
      * @param message				The received message containing the sentence.
      */
     public void processSpeechRecognitionMessage(GeneralMessage message) {
-    	System.out.println("-------------------------------------------");
-    	System.out.println("Processing message: "+message.getContent());
-    	System.out.println("-------------------------------------------");
+    	agent.log("-------------------------------------------");
+    	agent.log("Processing message: "+message.getContent());
+    	agent.log("-------------------------------------------");
     	
     	// Terminate when "exit" command is received
     	if (message.getContent().equals("exit")) {
@@ -488,16 +475,16 @@ public class AgentInterface extends AbstractNodeMain{
     	currentState = newState;
     	
     	// Log
-    	System.out.println("-------------------------------------------");
-    	System.out.println("New current state: "+currentState.getName());
-    	System.out.println("-------------------------------------------");
+    	agent.log("-------------------------------------------");
+    	agent.log("New current state: "+currentState.getName());
+    	agent.log("-------------------------------------------");
     	
     	// This state has an init message to say out loud
         if (!newState.getInitMessage().equals("")) {
-        	System.out.println("Sending text to speech on new state init: "+newState.getName());
+        	agent.log("Sending text to speech on new state init: "+newState.getName());
     		sendText2SpeechMessage(newState.getInitMessage());
     	} else {
-    		System.out.println("No init message set for new state: "+newState.getName());
+    		agent.log("No init message set for new state: "+newState.getName());
     	}
     	
     	// Export masks
@@ -510,9 +497,9 @@ public class AgentInterface extends AbstractNodeMain{
      */
     public void exportCurrentMasks() {
     	if (subscribeMessage != null) {
-	    	System.out.println("Exporting masks: ");
+	    	agent.log("Exporting masks: ");
 	    	ArrayList<AcceptedPattern> patterns = currentState.getPatterns();
-	    	for (int i=0; i<patterns.size(); i++) System.out.println(" - "+patterns.get(i).getMask());
+	    	for (int i=0; i<patterns.size(); i++) agent.log(" - "+patterns.get(i).getMask());
 	    	
 	    	// Clear and update reuseable subscribeMessage
 	    	subscribeMessage.clearPatterns();
@@ -597,5 +584,14 @@ public class AgentInterface extends AbstractNodeMain{
      */
     public void resetState() {
     	if (!startStateName.equals("")) changeState(stateMap.get(startStateName));
+    }
+    
+    
+    /**
+     * Returns the agent ID
+     * @return							The agent ID
+     */
+    public String getAgentID() {
+    	return agentID;
     }
 }

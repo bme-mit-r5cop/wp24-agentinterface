@@ -31,7 +31,7 @@ public class Test {
 		
 		//ProductDB db = new ProductDB();
 		
-		Product p = new Product("name","id","type",(float)100.1,0,800,600);
+		/*Product p = new Product("name","id","type",(float)100.1,0,800,600);
 		
 		ProductMessage pm = new ProductMessage("type", "sender", "target", p,"status");
 		
@@ -40,10 +40,14 @@ public class Test {
 		ProductMessage pm2 = new ProductMessage(pm.toJson());
 		
 		Product p2 = pm2.getProduct();
-		System.out.println(p2.getId());
+		System.out.println(p2.getId());*/
 		
 		/*PickupAgentDisplay pd = new PickupAgentDisplay();
 		pd.setVisible(true);*/
+		
+		for (int i=0; i<30; i++) {
+			System.out.print((int)(Math.round(Math.random()*(3)-0.5))+" ");
+		}
 	}
 
 }

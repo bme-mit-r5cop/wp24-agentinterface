@@ -4,6 +4,10 @@
 
 package agent;
 
+import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.ros.node.ConnectedNode;
 import org.ros.node.DefaultNodeMainExecutor;
 import org.ros.node.NodeMainExecutor;
@@ -22,6 +26,9 @@ import agentinterface.State;
 public class AbstractAgent implements AgentLogicInterface {
 	// Configuration strings
 	private String rosURL, configFile, agentID = null;
+	
+	// The Agent object identifier
+	public static String objectName = "";
 	
 	// AgentInterface
 	AgentInterface ai;
@@ -70,7 +77,7 @@ public class AbstractAgent implements AgentLogicInterface {
 	 * @return						The new state of the AgentInterface to move into
 	 */
 	public State activateTrigger(AgentInterface ai, String code, String input) {
-		System.out.println("No handler implemented for custom triggers, thus no state change is triggered by code '"+code+"'.");
+		log("No handler implemented for custom triggers, thus no state change is triggered by code '"+code+"'.");
 		return null;
 	}
 	
@@ -93,11 +100,12 @@ public class AbstractAgent implements AgentLogicInterface {
 	 */
 	public void processAllManagementMessages(GeneralMessage message) {
 		if (message.getContent().equals("terminate")) {
-			System.out.println("Terminating on ManagementMessage: "+message.getContent());
+			log("Terminating on ManagementMessage: "+message.getContent());
 			ai.getConnectedNode().shutdown();
 		} else if (message.getContent().equals("reset")) {
-			System.out.println("Resetting agent on ManagementMessage: "+message.getContent());
+			log("Resetting agent on ManagementMessage: "+message.getContent());
 			ai.resetState();
+			ai.exportCurrentMasks();
 			reset();
 		} else {
 			// Let the specific agent process this message
@@ -112,7 +120,7 @@ public class AbstractAgent implements AgentLogicInterface {
 	 * @param message
 	 */
 	public void processUnhandledManagementMessages(GeneralMessage message) {
-		System.out.println("No custom handler implemented for unhandled management messages, ignoring message: '"+message.getContent()+"'");
+		log("No custom handler implemented for unhandled management messages, ignoring message: '"+message.getContent()+"'");
 	}
 	
 	
@@ -121,7 +129,7 @@ public class AbstractAgent implements AgentLogicInterface {
 	 * Init the agent after connecting to ROS
 	 */
 	public void onStart(ConnectedNode connectedNode) {
-		System.out.println("Node connected to ROS.");
+		log("Node connected to ROS.");
 	}
 	
 	
@@ -150,6 +158,17 @@ public class AbstractAgent implements AgentLogicInterface {
      */
     public void reset() {
     	// Do nothing for the general agent
+    }
+    
+    
+    
+    /**
+     * Display log message on stdout
+     * @param message
+     */
+    public static void log(String message) {
+        String timeStamp = new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime());
+        System.out.println("["+timeStamp+"] "+message);
     }
 
 }

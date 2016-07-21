@@ -14,28 +14,21 @@ public class WarehouseDisplay extends JFrame {
 
 	public static void main(String[] args) {
 		init();
-	}
-	
-	public static void init() {
-		display = new WarehouseDisplay();
+		display.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		display.setVisible(true);
 	}
 	
-	public void showFrame() {
-		setVisible(true);
-	}
-	
-	public void hideFrame() {
-		setVisible(false);
+	public static WarehouseDisplay init() {
+		display = new WarehouseDisplay();
+		return display;
 	}
 	
 	public WarehouseDisplay() {
 		setLayout(new GridLayout(3,3));
 		db = new ProductDB();
 
-		setTitle("WarehouseDisplay");
-		setBounds(10,10, 1800, 900);
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setTitle("Step 1: Please read the QR codes of the items you want to buy!");
+		setBounds(0,0, 1920, 1080);
 		
 		for (Product product : db.getDB().values()) {
 			WarehouseDisplayPanel panel = new WarehouseDisplayPanel(product,true);

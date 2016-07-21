@@ -1,0 +1,26 @@
+{
+	"agent_id" : "SalesAgent",
+    "start_state" : "ready",
+    "states": [
+		{
+			"name": "ready",
+			"transitions": [
+				{ 
+					"mask": "what is on sale",
+					"priority" : 0,
+					"trigger" : "what_is_on_sale"
+				},
+				{ 
+					"mask": "yes.*",
+					"priority" : 1,
+					"trigger" : "yes_to_buy"
+				},
+				{ 
+					"mask": "no.*",
+					"priority" : 1,
+					"trigger" : "no_to_buy"
+				}
+			]
+		}
+	]
+}

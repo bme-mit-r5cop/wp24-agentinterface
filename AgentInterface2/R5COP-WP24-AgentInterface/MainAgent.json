@@ -1,0 +1,19 @@
+{
+	"agent_id" : "MainAgent",
+    "start_state" : "ready",
+    "states": [
+		{
+			"name": "ready",
+			"transitions": [
+				{ 
+					"mask": "go to store",
+					"trigger" : "go_to_store"
+				},
+				{ 
+					"mask": "go to warehouse",
+					"trigger" : "go_to_warehouse"
+				}
+			]
+		}
+	]
+}
