@@ -79,6 +79,9 @@ public class AgentInterface extends AbstractNodeMain{
     // The agent using this interface and to trigger event on
     private AbstractAgent agent;
     
+    // Name of the starting state of the robot
+    private String startStateName = "";
+    
     
     /**
      * Return the ROS node name of the agent
@@ -117,7 +120,7 @@ public class AgentInterface extends AbstractNodeMain{
     		System.out.println("No speech recognition topic set to subscribe for.");
     	}
         
-        Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("r5cop_management", std_msgs.String._TYPE);
+        Subscriber<std_msgs.String> managementSubscriber = connectedNode.newSubscriber("R5COP_Management", std_msgs.String._TYPE);
         managementSubscriber.addMessageListener(new MessageListener<std_msgs.String>() {
           @Override
           public void onNewMessage(std_msgs.String message) {
@@ -132,7 +135,7 @@ public class AgentInterface extends AbstractNodeMain{
         
         // Register as publisher to SpeechRecognitionRegister topic to export command patterns
     	speechRecognitionRegisterPublisher = connectedNode.newPublisher("SpeechRecognitionRegister", std_msgs.String._TYPE);
-    	managemenetPublisher = connectedNode.newPublisher("r5cop_management", std_msgs.String._TYPE);
+    	managemenetPublisher = connectedNode.newPublisher("R5COP_Management", std_msgs.String._TYPE);
     	// Wait for the publisher to get ready
         safeSleep(1000);
 
@@ -205,7 +208,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        
 	        // Init agent id and related variables
 	        agentID = json.getString("agent_id"); //+"___"+Math.round(Math.random()*100000+1);
-	        speechRecognitionTopic = agentID+"_speech_recognition";
+	        speechRecognitionTopic = agentID+"_SpeechRecognition";
 	        subscribeMessage = new SubscribeMessage(agentID, "SpeechRecognitionRegister", speechRecognitionTopic);
 	        
 	        // Loading empty states
@@ -313,7 +316,7 @@ public class AgentInterface extends AbstractNodeMain{
 	        }
 	        
 	        // Reading starting state
-	        String startStateName = json.getString("start_state");
+	        startStateName = json.getString("start_state");
 	        log ("Starting state set to: "+startStateName);
 	        currentState = stateMap.get(startStateName);
 	        
@@ -572,9 +575,27 @@ public class AgentInterface extends AbstractNodeMain{
      * @param content					The message content to send out
      */
     public void sendManagementMessage(String content) {
-    	GeneralMessage mm = new GeneralMessage(agentID,"r5cop_management",content);
+    	GeneralMessage mm = new GeneralMessage(agentID,"R5COP_Management",content);
     	std_msgs.String str = managemenetPublisher.newMessage();
     	str.setData(mm.toJson());
     	managemenetPublisher.publish(str);
+    }
+    
+    
+    /**
+     * Returns the name of the starting state of the agent defined originally in the
+     * agent configuration file
+     * @return
+     */
+    public String getStartStateName() {
+    	return startStateName;
+    }
+    
+    
+    /**
+     * Reset the state to the initial one
+     */
+    public void resetState() {
+    	if (!startStateName.equals("")) changeState(stateMap.get(startStateName));
     }
 }

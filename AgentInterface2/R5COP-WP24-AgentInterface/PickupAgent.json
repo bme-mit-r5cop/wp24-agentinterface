@@ -1,0 +1,20 @@
+{
+	"agent_id" : "PickupAgent",
+    "start_state" : "waiting_for_item_location",
+	"states": [
+		{
+			"name": "waiting_for_item_location",
+			"description": "The robot is not in pickup mode, the PickupAgent is disabled."
+		},
+		{
+			"name": "pickup_active",
+			"transitions": [
+				{
+					"mask": "what are you doing",
+					"priority" : 1,
+					"trigger" : "what_are_you_doing"
+				}
+			]
+		}
+	]
+}	

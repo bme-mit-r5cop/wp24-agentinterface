@@ -37,6 +37,15 @@ public class PickupAgent extends AbstractAgent {
 	            	String text = command.substring(5, command.length());
 	            	agent.checkPickup("R5COP-"+text);
             	}
+            } else if (command.startsWith("said")) {
+            	if (command.length()>4) {
+	            	String text = command.substring(5, command.length());
+	        		agent.getAgentInterface().processSpeechRecognitionMessage(text);
+            	}
+            } else if (command.startsWith("reset")) {
+        		agent.getAgentInterface().sendManagementMessage("reset");
+            } else if (command.startsWith("terminate")) {
+        		agent.getAgentInterface().sendManagementMessage("terminate");
             }
 		}
 	}
@@ -47,13 +56,13 @@ public class PickupAgent extends AbstractAgent {
 		// Init ROS node and agent interface
 		agent = new PickupAgent();
 		agent.setRosURL("http://10.5.0.1:11311/");
-		agent.setAgentID("pickup_agent");
+		agent.setConfigFile("PickupAgent.json");
 		agent.execute();
 		
 		// Load product database
 		db = new ProductDB();
 
-		
+		// Create agent display of boxes and QR codes
 		agent.display = new PickupAgentDisplay();
 		agent.display.setVisible(false);
 	}
@@ -80,7 +89,7 @@ public class PickupAgent extends AbstractAgent {
 	         }
 	       });
 	       
-	   // Subscribe to recive QR codes from ShoppingListAgent when a QR code is scanned before putting the box on the robot
+	   // Subscribe to receive QR codes from ShoppingListAgent when a QR code is scanned before putting the box on the robot
        Subscriber<std_msgs.String> subscriber2 = connectedNode.newSubscriber("PickupAgent_PickUp", std_msgs.String._TYPE);
 	      subscriber2.addMessageListener(new MessageListener<std_msgs.String>() {
 	        @Override
@@ -102,8 +111,12 @@ public class PickupAgent extends AbstractAgent {
 	public void startPickup() {
 		System.out.println("Starting pickup process.");
 		
+		// Now the agent is allowed to communicate with the user
+		agent.getAgentInterface().changeState(agent.getAgentInterface().getStateByName("pickup_active"));
+		
 		// Notify ShoppingListAgent to activate the QR code reader
 		ProductMessage shoppingListAgentNotifyMessage = new ProductMessage("inform","PickupAgent","ShoppingListAgent_Control",product,"at_product");
+		agent.getAgentInterface().publishMessage("ShoppingListAgent_Control", shoppingListAgentNotifyMessage);
 
 		// Instruct to user to look for the right box
 		instructPickup();
@@ -127,7 +140,7 @@ public class PickupAgent extends AbstractAgent {
 			agent.getAgentInterface().publishMessage("ShoppingListAgent_Control", shoppingListAgentNotifyMessage);
 			
 			// Notify the user
-			agent.getAgentInterface().sendText2SpeechMessage("This is the correct box, please put it on the robot!");
+			agent.getAgentInterface().sendText2SpeechMessage("This is the correct box, please put it on me!");
 			
 			// Hide GUI
 			agent.display.setVisible(false);
@@ -135,17 +148,26 @@ public class PickupAgent extends AbstractAgent {
 			// Notify the ItemCollectorAgent about successfull pickup
 			shoppingListAgentNotifyMessage.setTarget("PickupSuccess");
 			agent.getAgentInterface().publishMessage("ItemCollectorAgent_PickupSuccess", shoppingListAgentNotifyMessage);
+			
+			// Disable user communication
+			agent.getAgentInterface().changeState(agent.getAgentInterface().getStateByName("waiting_for_item_location"));
 		} else {
 			// This is not the correct product
 			System.out.println("Incorrect box selected.");
 			
 			ProductMessage shoppingListAgentNotifyMessage = new ProductMessage("inform","PickupAgent","ShoppingListAgent_Control",product,"pickup_failure");
+			agent.getAgentInterface().publishMessage("ShoppingListAgent_Control", shoppingListAgentNotifyMessage);
 			
 			// Notify the user about the failure and ask to try again
 			agent.getAgentInterface().sendText2SpeechMessage("This is not the box you need.");
 			instructPickup();
 			
 		}
-		
+	}
+	
+	public void reset() {
+		waiting = true;
+		product = null;
+		agent.display.setVisible(false);
 	}
 }

@@ -36,6 +36,5 @@ public class BatteryAgent extends AbstractAgent {
 		}
 		
 		return null;
-	}
-	
+	}	
 }

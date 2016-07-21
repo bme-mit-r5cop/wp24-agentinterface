@@ -95,6 +95,10 @@ public class AbstractAgent implements AgentLogicInterface {
 		if (message.getContent().equals("terminate")) {
 			System.out.println("Terminating on ManagementMessage: "+message.getContent());
 			ai.getConnectedNode().shutdown();
+		} else if (message.getContent().equals("reset")) {
+			System.out.println("Resetting agent on ManagementMessage: "+message.getContent());
+			ai.resetState();
+			reset();
 		} else {
 			// Let the specific agent process this message
 			processUnhandledManagementMessages(message);
@@ -137,6 +141,15 @@ public class AbstractAgent implements AgentLogicInterface {
     public void terminate() {
     	ai.getConnectedNode().shutdown();
     	System.exit(0);
+    
+    }
+    
+    
+    /**
+     * Reset the agent to its initial state
+     */
+    public void reset() {
+    	// Do nothing for the general agent
     }
 
 }

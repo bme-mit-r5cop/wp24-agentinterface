@@ -1,21 +1,50 @@
 {
-	"agent_id" : "item_collector_agent",
+	"agent_id" : "ItemCollectorAgent",
     "start_state" : "waiting_for_items",
 	"states": [
 		{
-			"name": "waiting_for_items"
+			"name": "waiting_for_items",
+			"transitions": [
+				{ 
+					"mask": "what are you doing",
+					"priority" : 0,
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "I'm waiting for you to select your first item you want to buy."
+						}
+					]
+				}
+			]
 		},
 		{
 			"name": "waiting_for_start_collecting",
 			"transitions": [ 
 				{
-					"mask": "let's collect the items",
+					"mask": "start collecting items",
 					"trigger" : "start_collecting"
+				},
+				{ 
+					"mask": "what are you doing",
+					"priority" : 0,
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "I'm waiting for you to select more items to buy. If you finished picking new items please instruct me by saying 'start collecting items'!"
+						}
+					]
 				}
 			]
 		},
 		{
-			"name": "collecting"
+			"name": "collecting",
+			"transitions": [
+				{
+					"mask": "what are you doing",
+					"priority" : 0,
+					"trigger" : "what_are_you_doing"
+				}
+			]
 		}
 	]
 }	
