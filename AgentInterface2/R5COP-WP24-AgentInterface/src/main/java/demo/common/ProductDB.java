@@ -34,9 +34,11 @@ public class ProductDB {
 								id,
 								product.getString("type"),
 								Float.valueOf(product.getString("price")),
+								Integer.valueOf(product.getString("discount")),
 								Integer.valueOf(product.getString("pos_x")),
 								Integer.valueOf(product.getString("pos_y"))
 							);
+					
 					database.put(id, productObject);
 				} catch (Exception e) {
 					System.err.println("Failed to load product from JSON object: "+product.toString());

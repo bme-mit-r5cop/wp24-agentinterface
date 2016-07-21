@@ -5,5 +5,5 @@ ItemCollectorAgent_SpeechRecognition
 ItemCollectorAgent_AddItem
 ItemCollectorAgent_PickupSuccess
 PickupAgent_Arrival
-PickupAgent_PickUp
+PickupAgent_Pickup
 R5COP_Management

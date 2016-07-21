@@ -90,7 +90,7 @@ public class PickupAgent extends AbstractAgent {
 	       });
 	       
 	   // Subscribe to receive QR codes from ShoppingListAgent when a QR code is scanned before putting the box on the robot
-       Subscriber<std_msgs.String> subscriber2 = connectedNode.newSubscriber("PickupAgent_PickUp", std_msgs.String._TYPE);
+       Subscriber<std_msgs.String> subscriber2 = connectedNode.newSubscriber("PickupAgent_Pickup", std_msgs.String._TYPE);
 	      subscriber2.addMessageListener(new MessageListener<std_msgs.String>() {
 	        @Override
 	        public void onNewMessage(std_msgs.String message) {

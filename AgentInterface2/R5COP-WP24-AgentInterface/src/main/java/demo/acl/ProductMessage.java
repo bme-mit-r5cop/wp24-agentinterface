@@ -40,7 +40,8 @@ public class ProductMessage extends ACLMessage {
 				productObject.getString("name"), 
 				productObject.getString("id"),
 				productObject.getString("type"), 
-				(float)Float.valueOf(productObject.getString("price")), 
+				(float)Float.valueOf(productObject.getString("price")),
+				Integer.valueOf(productObject.getString("discount")),
 				Integer.valueOf(productObject.getString("pos_x")), 
 				Integer.valueOf(productObject.getString("pos_y"))
 				);
@@ -113,6 +114,7 @@ public class ProductMessage extends ACLMessage {
 				"    \"id\" : \""+product.getId()+"\",\n" +
 				"    \"type\" : \""+product.getType()+"\",\n" +
 				"    \"price\" : \""+product.getPrice()+"\",\n" +
+				"    \"discount\" : \""+product.getDiscount()+"\",\n" +
 				"    \"pos_x\" : \""+product.getPosX()+"\",\n" + 
 				"    \"pos_y\" : \""+product.getPosY()+"\"\n" + 
 				"  },\n"+

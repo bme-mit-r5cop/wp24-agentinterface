@@ -15,6 +15,9 @@ public class Product {
 	// Product location on the map
 	int posX, posY;
 	
+	// Discount percent
+	int discount = 0;
+	
 	
 	/**
 	 * Constructor
@@ -23,13 +26,15 @@ public class Product {
 	 * @param id					Product ID
 	 * @param type					Product type
 	 * @param price					Product price
+	 * @param discount				Discount percent
 	 * @param posX					Location x
 	 * @param posY					Location y
 	 */
-	public Product(String name, String id, String type, float price, int posX, int posY) {
+	public Product(String name, String id, String type, float price, int discount, int posX, int posY) {
 		this.name = name;
 		this.id = id;
 		this.type = type;
+		this.discount = discount;
 		this.price = price;
 		this.posX = posX;
 		this.posY = posY;
@@ -171,5 +176,25 @@ public class Product {
 	 */
 	public boolean compareTo(Product other) {
 		return id.equals(other.getId());
+	}
+	
+	
+	/**
+	 * Returns the discount value
+	 * @return
+	 */
+	public int getDiscount() {
+		return discount;
+	}
+	
+	
+	
+	/**
+	 * Set the discount value
+	 * 
+	 * @param discount				The discount value to set
+	 */
+	public void setDiscount(int discount) {
+		this.discount = discount;
 	}
 }

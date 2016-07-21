@@ -12,9 +12,10 @@
 			"id" : "R5COP-2",
 			"name" : "HEMNES",
 			"type" : "wardrobe",
-			"price" : "189.00",
+			"price" : "171.00",
 			"pos_x" : "0",
-			"pos_y" : "0"
+			"pos_y" : "0",
+			"discount" : "10"
 		},
 		{
 			"id" : "R5COP-3",
@@ -60,9 +61,10 @@
 			"id" : "R5COP-8",
 			"name" : "BALUNGEN",
 			"type" : "clothes peg",
-			"price" : "6.99",
+			"price" : "5.99",
 			"pos_x" : "0",
-			"pos_y" : "0"
+			"pos_y" : "0",
+			"discount" : "15"
 		},
 		{
 			"id" : "R5COP-9",
