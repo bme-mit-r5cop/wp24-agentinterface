@@ -8,6 +8,8 @@ import org.ros.node.topic.Subscriber;
 
 import acl.GeneralMessage;
 import agent.AbstractAgent;
+import agentinterface.AgentInterface;
+import agentinterface.State;
 import demo.acl.Product;
 import demo.acl.ProductMessage;
 import demo.common.ProductDB;
@@ -201,5 +203,13 @@ public class PickupAgent extends AbstractAgent {
 	public void goToWarehouse() {
 		agent.pickupDisplay.setVisible(true);
 		agent.warehouseDisplay.setVisible(false);
+	}
+	
+	public State activateTrigger(AgentInterface ai, String code, String input) {
+		if (code.equals("what_are_you_doing")) {
+			agent.getAgentInterface().sendText2SpeechMessage("I'm waiting for you to select the appropriate box.");
+			instructPickup();
+		}
+		return null;
 	}
 }

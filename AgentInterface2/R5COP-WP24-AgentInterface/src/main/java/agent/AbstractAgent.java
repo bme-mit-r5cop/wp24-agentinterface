@@ -149,7 +149,6 @@ public class AbstractAgent implements AgentLogicInterface {
     public void terminate() {
     	ai.getConnectedNode().shutdown();
     	System.exit(0);
-    
     }
     
     

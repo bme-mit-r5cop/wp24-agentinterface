@@ -1,0 +1,6 @@
+{
+  "type" : "inform",
+  "sender" : "sales_agent",
+  "target" : "ItemCollectorAgent_AddItem",
+  "content" : "R5COP-2"
+}

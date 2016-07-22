@@ -45,9 +45,12 @@ public class Test {
 		/*PickupAgentDisplay pd = new PickupAgentDisplay();
 		pd.setVisible(true);*/
 		
-		for (int i=0; i<30; i++) {
+		/*for (int i=0; i<30; i++) {
 			System.out.print((int)(Math.round(Math.random()*(3)-0.5))+" ");
-		}
+		}*/
+		
+		PickupAgentDisplay d = new PickupAgentDisplay();
+		d.setVisible(true);
 	}
 
 }
