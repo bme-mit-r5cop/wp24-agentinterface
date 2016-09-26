@@ -26,7 +26,11 @@ public class PickupAgent extends AbstractAgent {
 	
 	public static void main(String[] args) {
 		log("PickupAgent standalone starting.");
-		init();
+		if (args.length != 1) {
+			System.out.println("Missing ROS URL as command line argument.");
+			System.exit(-1);
+		}
+		init(args[0]);
 		
 		Scanner scanner = new Scanner(System.in);
 		String command;
@@ -55,13 +59,13 @@ public class PickupAgent extends AbstractAgent {
 		}
 	}
 	
-	public static PickupAgent init() {
+	public static PickupAgent init(String rosURL) {
 		PickupAgent.objectName = "PickupAgent";
 		log("PickupAgent initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new PickupAgent();
-		agent.setRosURL("http://10.5.0.1:11311/");
+		agent.setRosURL(rosURL);
 		agent.setConfigFile("PickupAgent.json");
 		agent.execute();
 		

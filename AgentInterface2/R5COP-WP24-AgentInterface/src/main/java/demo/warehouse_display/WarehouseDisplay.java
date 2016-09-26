@@ -28,7 +28,7 @@ public class WarehouseDisplay extends JFrame {
 		db = new ProductDB();
 
 		setTitle("Step 1: Please read the QR codes of the items you want to buy!");
-		setBounds(0,0, 1920, 1080);
+		setBounds(0,0, 1600, 900);
 		
 		for (Product product : db.getDB().values()) {
 			WarehouseDisplayPanel panel = new WarehouseDisplayPanel(product,true);

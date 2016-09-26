@@ -27,7 +27,11 @@ public class ItemCollectorAgent extends AbstractAgent {
 	
 	public static void main(String[] args) {   
 		log("ItemCollectorAgent starting as standalone application.");
-		init();
+		if (args.length != 1) {
+			System.out.println("Missing ROS URL as command line argument.");
+			System.exit(-1);
+		}
+		init(args[0]);
 		
 		Scanner scanner = new Scanner(System.in);
 		String command;
@@ -61,13 +65,13 @@ public class ItemCollectorAgent extends AbstractAgent {
 		}
 	}
 	
-	public static ItemCollectorAgent init() {
+	public static ItemCollectorAgent init(String rosURL) {
 		ItemCollectorAgent.objectName = "ItemCollectorAgent";
 		log("ItemCollectorAgent initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new ItemCollectorAgent();
-		agent.setRosURL("http://10.5.0.1:11311/");
+		agent.setRosURL(rosURL);
 		agent.setConfigFile("ItemCollectorAgent.json");
 		agent.execute();
 		

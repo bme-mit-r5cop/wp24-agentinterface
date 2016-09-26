@@ -22,7 +22,7 @@ public class ROSDisplayGUI extends JFrame{
 		this.agent = agent;
 		
 		setTitle("ROSDisplay");
-		setBounds(1920,0, 1920, 1080);
+		setBounds(0,0, 1600, 900);
 		setLayout(new GridLayout(3,3));
 		
 		

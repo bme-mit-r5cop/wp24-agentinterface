@@ -21,7 +21,11 @@ public class MainAgent extends AbstractAgent {
 	
 	public static void main(String[] args) {
 		// Init demo main agent
-		init();
+		if (args.length != 1) {
+			System.out.println("Missing ROS URL as command line argument.");
+			System.exit(-1);
+		}
+		init(args[0]);
 		
 		// Create a warehouse display
 		//warehouseDisplay = WarehouseDisplay.init();
@@ -30,24 +34,24 @@ public class MainAgent extends AbstractAgent {
 		ROSDisplay.main(null);
 		
 		// Start an item collector agent
-		itemCollectorAgent = ItemCollectorAgent.init();
+		itemCollectorAgent = ItemCollectorAgent.init(args[0]);
 		
 		// Start a pickup agent
-		pickupAgent = PickupAgent.init();
+		pickupAgent = PickupAgent.init(args[0]);
 		
 		// Start a sales agent
-		salesAgent = SalesAgent.init();
+		salesAgent = SalesAgent.init(args[0]);
 		
 		processConsoleInput();
 	}
 	
-	public static void init() {
+	public static void init(String rosURL) {
 		ItemCollectorAgent.objectName = "DemoMainAgent";
 		log("Initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new MainAgent();
-		agent.setRosURL("http://10.5.0.1:11311/");
+		agent.setRosURL(rosURL);
 		agent.setConfigFile("MainAgent.json");
 		agent.execute();
 	}

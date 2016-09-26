@@ -11,8 +11,12 @@ public class ROSDisplay extends AbstractAgent{
 
 	public static void main(String[] args) {
 		ROSDisplay.objectName = "ROSDisplay";
+		if (args.length != 1) {
+			System.out.println("Missing ROS URL as command line argument.");
+			System.exit(-1);
+		}
 		agent = new ROSDisplay();
-		agent.setRosURL("http://10.5.0.1:11311/");
+		agent.setRosURL(args[0]);
 		agent.setAgentID("ROSDisplay");
 		agent.execute();
 	}
