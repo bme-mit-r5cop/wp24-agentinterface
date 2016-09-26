@@ -21,8 +21,8 @@ public class PickupAgent extends AbstractAgent {
 	static ProductDB db = null;
 	static boolean waiting = true;
 	Product product = null;
-	PickupAgentDisplay pickupDisplay;
-	WarehouseDisplay warehouseDisplay;
+	//PickupAgentDisplay pickupDisplay;
+	//WarehouseDisplay warehouseDisplay;
 	
 	public static void main(String[] args) {
 		log("PickupAgent standalone starting.");
@@ -68,12 +68,14 @@ public class PickupAgent extends AbstractAgent {
 		// Load product database
 		db = new ProductDB();
 
+		/*
 		// Create agent display of boxes and QR codes
 		agent.pickupDisplay = new PickupAgentDisplay();
 		agent.pickupDisplay.setVisible(false);
 		
 		agent.warehouseDisplay = new WarehouseDisplay();
 		agent.warehouseDisplay.setVisible(true);
+		*/
 		
 		return agent;
 	}
@@ -142,9 +144,11 @@ public class PickupAgent extends AbstractAgent {
 		// Instruct to user to look for the right box
 		instructPickup();
 		
+		/*
 		// Display the GUI showing the boxes with QR codes and wait for the ShoppingListAgent to sent the QR code of the correct box
 		agent.pickupDisplay.setVisible(true);
 		agent.warehouseDisplay.setVisible(false);
+		*/
 	}
 	
 	public void instructPickup() {
@@ -164,9 +168,11 @@ public class PickupAgent extends AbstractAgent {
 			// Notify the user
 			agent.getAgentInterface().sendText2SpeechMessage("This is the correct box, please put it on me!");
 			
+			/*
 			// Hide GUI
 			agent.pickupDisplay.setVisible(false);
 			agent.warehouseDisplay.setVisible(true);
+			*/
 			
 			// Notify the ItemCollectorAgent about successfull pickup
 			shoppingListAgentNotifyMessage.setTarget("PickupSuccess");
@@ -191,18 +197,18 @@ public class PickupAgent extends AbstractAgent {
 	public void reset() {
 		waiting = true;
 		product = null;
-		agent.pickupDisplay.setVisible(false);
-		agent.warehouseDisplay.setVisible(true);
+		/*agent.pickupDisplay.setVisible(false);
+		agent.warehouseDisplay.setVisible(true);*/
 	}
 	
 	public void goToStore() {
-		agent.pickupDisplay.setVisible(false);
-		agent.warehouseDisplay.setVisible(true);
+		/*agent.pickupDisplay.setVisible(false);
+		agent.warehouseDisplay.setVisible(true);*/
 	}
 	
 	public void goToWarehouse() {
-		agent.pickupDisplay.setVisible(true);
-		agent.warehouseDisplay.setVisible(false);
+		/*agent.pickupDisplay.setVisible(true);
+		agent.warehouseDisplay.setVisible(false);*/
 	}
 	
 	public State activateTrigger(AgentInterface ai, String code, String input) {

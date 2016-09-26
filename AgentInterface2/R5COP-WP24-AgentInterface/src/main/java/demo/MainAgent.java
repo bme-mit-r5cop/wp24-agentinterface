@@ -14,7 +14,7 @@ import ros_display.ROSDisplay;
 
 public class MainAgent extends AbstractAgent {
 	public static MainAgent agent;
-	public static WarehouseDisplay warehouseDisplay;
+	//public static WarehouseDisplay warehouseDisplay;
 	public static ItemCollectorAgent itemCollectorAgent;
 	public static PickupAgent pickupAgent;
 	public static SalesAgent salesAgent;
@@ -24,7 +24,7 @@ public class MainAgent extends AbstractAgent {
 		init();
 		
 		// Create a warehouse display
-		warehouseDisplay = WarehouseDisplay.init();
+		//warehouseDisplay = WarehouseDisplay.init();
 		
 		// Start ROSDisplay (debug)
 		ROSDisplay.main(null);
