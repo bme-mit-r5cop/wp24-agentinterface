@@ -14,6 +14,7 @@ import agentinterface.State;
 import demo.acl.Product;
 import demo.acl.ProductMessage;
 import demo.common.ProductDB;
+import simalatorInterface.SimulatorInterface2;
 
 public class ItemCollectorAgent extends AbstractAgent {
 	static ItemCollectorAgent agent;
@@ -24,6 +25,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 	static boolean isPickupActive = false;
 	static ArrayList<Product> shoppingList = new ArrayList<Product>();
 	static int shoppingListIndex = -1;
+	static SimulatorInterface2 smi;
 	
 	public static void main(String[] args) {   
 		log("ItemCollectorAgent starting as standalone application.");
@@ -77,6 +79,9 @@ public class ItemCollectorAgent extends AbstractAgent {
 		
 		// Load product database
 		db = new ProductDB();
+		
+		// Init simulator interface
+		smi = new SimulatorInterface2(rosURL);
 		
 		return agent;
 	}
@@ -231,7 +236,8 @@ public class ItemCollectorAgent extends AbstractAgent {
 			// Trigger robot navigation to move to the location of the item:
 			// actual.getPosX()
 			// actual.getPosY()
-			AgentInterface.safeSleep(5000);
+			//AgentInterface.safeSleep(5000);
+			smi.moveRobot(actual.getPosX(), actual.getPosY());
 			
 			// Let's assume we have arrived
 			robotArrived();

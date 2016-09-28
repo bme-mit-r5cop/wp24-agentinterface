@@ -17,7 +17,7 @@ import static javax.swing.ScrollPaneConstants.*;
 import agent.AbstractAgent;
 
 public class ROSDisplayPanel extends JPanel {
-	JTextArea area = new JTextArea(19,55);
+	JTextArea area = new JTextArea(14,45);
 	JScrollPane scrollPane = new JScrollPane(area);
 	JLabel label;
 	

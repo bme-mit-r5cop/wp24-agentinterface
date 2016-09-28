@@ -31,7 +31,7 @@ public class MainAgent extends AbstractAgent {
 		//warehouseDisplay = WarehouseDisplay.init();
 		
 		// Start ROSDisplay (debug)
-		ROSDisplay.main(null);
+		ROSDisplay.init(args[0]);
 		
 		// Start an item collector agent
 		itemCollectorAgent = ItemCollectorAgent.init(args[0]);
