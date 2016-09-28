@@ -6,7 +6,7 @@
 			"name": "ready",
 			"transitions": [
 				{
-					"mask": "park to QR code",
+					"mask": ".*qr code.*",
 					"output_messages": [
 						{
 							"target": "robot/9875/execute_skill",

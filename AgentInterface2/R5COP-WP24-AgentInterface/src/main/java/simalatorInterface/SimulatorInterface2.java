@@ -3,6 +3,7 @@ package simalatorInterface;
 import java.io.IOException;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.ros.namespace.GraphName;
@@ -14,6 +15,7 @@ import org.ros.node.NodeConfiguration;
 import org.ros.node.NodeMainExecutor;
 
 import actionlib_msgs.GoalStatusArray;
+import demo.acl.Product;
 import test.Talker;
 
 public class SimulatorInterface2 extends AbstractNodeMain {
@@ -31,8 +33,18 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 		uid = r.nextLong();
 		nodeMainExecutor.execute(this, nodeConfiguration);
 
+		
+		
 	}
 
+	public ArrayList<Product> makePickupPlan(ArrayList<Product> shoppingList){
+		ArrayList<Product> ret = new ArrayList<>();
+		
+		
+		
+		return ret;
+	}
+	
 	public void init(String rosurl) {
 		URI rosMaster = URI.create(rosurl);
 		nodeConfiguration = null;
@@ -50,8 +62,12 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 	}
 
 	public boolean moveRobot(int goalX, int goalY) {
-		goalSender.sendGoal(goalX / 100.0, goalY / 100.0);
-		return true;
+		return goalSender.sendGoal(goalX / 100.0, goalY / 100.0);
+	}
+	
+	public void stopRobot() {
+		goalSender.cancel();
+		//return true;
 	}
 
 	@Override
@@ -90,9 +106,10 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("starting movement");
-		smi.moveRobot(250, -270);
-		System.out.println("movement finisegg");
+		//System.out.println("starting movement");
+		//smi.moveRobot(250, -270);
+		//System.out.println("movement finisegg");
+		smi.stopRobot();
 	}
 }
 

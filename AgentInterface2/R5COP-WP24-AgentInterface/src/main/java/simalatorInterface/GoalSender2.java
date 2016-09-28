@@ -22,33 +22,40 @@ import std_msgs.Header;
 public class GoalSender2 {
 	private String topic_name;
 	private Publisher<geometry_msgs.PoseStamped> publisher;
+	private Publisher<actionlib_msgs.GoalID> cancelPublisher;
 	private Subscriber<move_base_msgs.MoveBaseActionResult> subscriber;
 	private int seq = 1;
 	private ConnectedNode connectedNode;
 
-	boolean isMoveEnded=false;
-	
+	boolean isMoveEnded = false;
+	boolean isMoveSuccess = false;
+
 	public GoalSender2(ConnectedNode cn) {
 		topic_name = "move_base_simple/goal";
-		
-		connectedNode = cn;
-		
-		publisher = connectedNode.newPublisher(topic_name,	geometry_msgs.PoseStamped._TYPE);
-		subscriber = connectedNode.newSubscriber("/move_base/result", move_base_msgs.MoveBaseActionResult._TYPE);
-	    
-		subscriber.addMessageListener(new MessageListener<move_base_msgs.MoveBaseActionResult>() {
-	      @Override
-	      public void onNewMessage(move_base_msgs.MoveBaseActionResult message) {
-	        //log.info("I heard: \"" + message.getData() + "\"");
-	    	  System.out.println("Move result: " + message.getStatus().getText());
-	    	  isMoveEnded=true;
-	      }
-	    });
-	}
 
-	public void sendGoal(double x, double y) {
+		connectedNode = cn;
+
+		publisher = connectedNode.newPublisher(topic_name, geometry_msgs.PoseStamped._TYPE);
+		subscriber = connectedNode.newSubscriber("/move_base/result", move_base_msgs.MoveBaseActionResult._TYPE);
+		cancelPublisher = connectedNode.newPublisher("move_base/cancel", actionlib_msgs.GoalID._TYPE);
 		
+		subscriber.addMessageListener(new MessageListener<move_base_msgs.MoveBaseActionResult>() {
+			@Override
+			public void onNewMessage(move_base_msgs.MoveBaseActionResult message) {
+				// log.info("I heard: \"" + message.getData() + "\"");
+				String result = message.getStatus().getText();
+				System.out.println("Move result: " + result);
+				isMoveEnded = true;
+				isMoveSuccess = result.contains("Goal reached");
+			}
+		});
+	}
+	public void cancel() {
+		actionlib_msgs.GoalID cancelmsg = connectedNode.getTopicMessageFactory().newFromType(actionlib_msgs.GoalID._TYPE);
+		cancelPublisher.publish(cancelmsg);
 		
+	}
+	public boolean sendGoal(double x, double y) {
 
 		// geometry_msgs.PoseStamped goal = publisher.newMessage();
 		geometry_msgs.PoseStamped goal = connectedNode.getTopicMessageFactory()
@@ -69,10 +76,10 @@ public class GoalSender2 {
 		goal.setPose(pose);
 
 		publisher.publish(goal);
-		System.out.println("Goal(x="+x+", y="+y+") sent.");
+		System.out.println("Goal(x=" + x + ", y=" + y + ") sent.");
 		isMoveEnded = false;
-		
-		while(!isMoveEnded){
+		isMoveSuccess = false;
+		while (!isMoveEnded) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -80,8 +87,8 @@ public class GoalSender2 {
 				e.printStackTrace();
 			}
 		}
-		
+		return isMoveSuccess;
+
 	}
 
 }
-
