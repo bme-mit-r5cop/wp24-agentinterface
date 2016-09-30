@@ -1,4 +1,4 @@
-package demo.pickup_agent;
+package demo.sub_agents;
 
 import java.util.Scanner;
 
@@ -13,8 +13,6 @@ import agentinterface.State;
 import demo.acl.Product;
 import demo.acl.ProductMessage;
 import demo.common.ProductDB;
-import demo.item_collector.ItemCollectorAgent;
-import demo.warehouse_display.WarehouseDisplay;
 
 public class PickupAgent extends AbstractAgent {
 	static PickupAgent agent = null;

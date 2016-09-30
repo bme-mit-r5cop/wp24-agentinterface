@@ -1,4 +1,4 @@
-package demo.pickup_agent;
+package demo.sub_agents;
 
 import java.awt.GridLayout;
 
@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 
 import demo.acl.Product;
 import demo.common.ProductDB;
-import demo.warehouse_display.WarehouseDisplay;
-import demo.warehouse_display.WarehouseDisplayPanel;
 
 public class PickupAgentDisplay extends JFrame{
 	public ProductDB db;

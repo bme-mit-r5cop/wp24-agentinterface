@@ -1,4 +1,4 @@
-package demo.warehouse_display;
+package demo.sub_agents;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,7 +22,7 @@ public class WarehouseDisplayPanel extends JPanel {
 		}
 		addImageLabel("src/images/"+product.getId()+"-QR.JPG",false,300,50,200,200);
 		
-		JLabel title = new JLabel(product.getName()+" (€ "+product.getPrice()+")");
+		JLabel title = new JLabel(product.getName()+" (ï¿½ "+product.getPrice()+")");
 		title.setBounds(310,0,250,30);
 		title.setFont(new Font("Arial", Font.BOLD, 22));
 		add(title);

@@ -3,7 +3,7 @@ package test;
 
 import demo.acl.Product;
 import demo.acl.ProductMessage;
-import demo.pickup_agent.PickupAgentDisplay;
+import demo.sub_agents.PickupAgentDisplay;
 
 public class Test {
 

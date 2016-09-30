@@ -3,7 +3,7 @@ package ros_display;
 import org.ros.node.ConnectedNode;
 
 import agent.AbstractAgent;
-import demo.sales_agent.SalesAgent;
+import demo.sub_agents.SalesAgent;
 
 public class ROSDisplay extends AbstractAgent{
 	public static ROSDisplay agent;

@@ -1,4 +1,4 @@
-package demo.warehouse_display;
+package demo.sub_agents;
 
 import java.awt.GridLayout;
 import java.util.Iterator;

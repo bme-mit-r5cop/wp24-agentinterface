@@ -59,6 +59,9 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 	public boolean gotoExit() {
 		return goalSender.sendGoal(-7.3, 8.9);
 	}
+	public boolean gotoStart() {
+		return goalSender.sendGoal(0, 1);
+	}
 	
 	public void stopRobot() {
 		goalSender.cancel();

@@ -1,4 +1,4 @@
-package demo;
+package demo.sub_agents;
 
 import java.awt.Font;
 

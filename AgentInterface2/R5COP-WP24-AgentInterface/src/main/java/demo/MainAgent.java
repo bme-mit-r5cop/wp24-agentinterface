@@ -6,11 +6,11 @@ import agent.AbstractAgent;
 import agentinterface.AgentInterface;
 import agentinterface.State;
 import demo.common.ProductDB;
-import demo.item_collector.ItemCollectorAgent;
-import demo.pickup_agent.PickupAgent;
-import demo.sales_agent.SalesAgent;
-import demo.stopagent.StopAgent;
-import demo.warehouse_display.WarehouseDisplay;
+import demo.sub_agents.ItemCollectorAgent;
+import demo.sub_agents.PickupAgent;
+import demo.sub_agents.SalesAgent;
+import demo.sub_agents.StopAgent;
+import demo.sub_agents.WarehouseDisplay;
 import ros_display.ROSDisplay;
 
 public class MainAgent extends AbstractAgent {
@@ -34,6 +34,8 @@ public class MainAgent extends AbstractAgent {
 		
 		// Start ROSDisplay (debug)
 		ROSDisplay.init(args[0]);
+		safeSleep(1000);
+		
 		
 		// Start an item collector agent
 		itemCollectorAgent = ItemCollectorAgent.init(args[0]);
@@ -127,6 +129,15 @@ public class MainAgent extends AbstractAgent {
 		}
 		
 		return null;
+	}
+	
+	public static void safeSleep(int timeout) {
+		try {
+			Thread.sleep(timeout);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

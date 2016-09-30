@@ -1,10 +1,11 @@
-package demo.stopagent;
+package demo.sub_agents;
 
 import java.util.Scanner;
 
 import agent.AbstractAgent;
 import agentinterface.AgentInterface;
 import agentinterface.State;
+import demo.MainAgent;
 import demo.QRRobotAgent;
 import simalatorInterface.SimulatorInterface2;
 
@@ -55,6 +56,15 @@ public class StopAgent extends AbstractAgent {
 	public State activateTrigger(AgentInterface ai, String code, String input) {
 		if (code.equals("stop_robot")) {
 			smi.stopRobot();
+		} else if (code.equals("restart_demo")) {
+			// Reset simulator
+			agent.getAgentInterface().sendText2SpeechMessage("Sending back robot to the entrance.");
+			smi.gotoStart();
+			agent.getAgentInterface().sendText2SpeechMessage("Robot has arrived to the entrance.");
+			
+			// Reset all other agents
+			agent.getAgentInterface().sendManagementMessage("reset");
+			agent.getAgentInterface().sendText2SpeechMessage("Demo has been restarted.");
 		} else {
 			System.out.print("Invalid trigger.");
 		}

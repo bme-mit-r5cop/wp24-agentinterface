@@ -6,10 +6,10 @@ import agent.AbstractAgent;
 import agentinterface.AgentInterface;
 import agentinterface.State;
 import demo.common.ProductDB;
-import demo.item_collector.ItemCollectorAgent;
-import demo.pickup_agent.PickupAgent;
-import demo.sales_agent.SalesAgent;
-import demo.warehouse_display.WarehouseDisplay;
+import demo.sub_agents.ItemCollectorAgent;
+import demo.sub_agents.PickupAgent;
+import demo.sub_agents.SalesAgent;
+import demo.sub_agents.WarehouseDisplay;
 import ros_display.ROSDisplay;
 
 public class QRRobotAgent extends AbstractAgent {

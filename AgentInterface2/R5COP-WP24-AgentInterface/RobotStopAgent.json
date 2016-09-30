@@ -8,6 +8,37 @@
 				{ 
 					"mask": ".*stop.*",
 					"trigger" : "stop_robot"
+				},
+				{ 
+					"mask": ".*start demo.*",
+					"trigger" : "restart_demo"
+				},
+				{ 
+					"mask": ".*hello.*",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Hello, welcome to our warehouse! I'll be your assistant.'"
+						}
+					]
+				},
+				{ 
+					"mask": ".*goodbye.*",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Good bye!"
+						}
+					]
+				},
+				{ 
+					"mask": ".*good bye.*",
+					"output_messages": [
+						{
+							"target": "Text2Speech",
+							"message": "Good bye!"
+						}
+					]
 				}
 			]
 		}

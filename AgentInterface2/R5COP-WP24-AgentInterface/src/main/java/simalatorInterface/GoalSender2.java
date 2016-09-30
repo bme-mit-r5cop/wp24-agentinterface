@@ -34,7 +34,7 @@ public class GoalSender2 {
 			public void onNewMessage(move_base_msgs.MoveBaseActionResult message) {
 				// log.info("I heard: \"" + message.getData() + "\"");
 				String result = message.getStatus().getText();
-				System.out.println("Move result: " + result);
+				System.out.println("[SMI]Move result: " + result);
 				isMoveEnded = true;
 				isMoveSuccess = result.contains("Goal reached");
 			}
@@ -66,7 +66,7 @@ public class GoalSender2 {
 		goal.setPose(pose);
 
 		publisher.publish(goal);
-		System.out.println("Goal(x=" + x + ", y=" + y + ") sent.");
+		System.out.println("[SMI]Goal(x=" + x + ", y=" + y + ") sent.");
 		isMoveEnded = false;
 		isMoveSuccess = false;
 		while (!isMoveEnded) {

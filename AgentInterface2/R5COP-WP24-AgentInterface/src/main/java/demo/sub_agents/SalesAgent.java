@@ -1,4 +1,4 @@
-package demo.sales_agent;
+package demo.sub_agents;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import agentinterface.AgentInterface;
 import agentinterface.State;
 import demo.acl.Product;
 import demo.common.ProductDB;
-import demo.pickup_agent.PickupAgent;
 
 public class SalesAgent extends AbstractAgent {
 	private static SalesAgent agent;

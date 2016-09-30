@@ -1,4 +1,4 @@
-package demo.item_collector;
+package demo.sub_agents;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -97,11 +97,15 @@ public class ItemCollectorAgent extends AbstractAgent {
 	          public void onNewMessage(std_msgs.String message) {
 	        	  log("Processing message received on topic 'ItemCollectorAgent_AddItem'.");
 	        	  
-	        	  // Parse GeneralMessage
-	              GeneralMessage gm = new GeneralMessage(message.getData());
+	        	   if(waiting) {
+	        		  // Parse GeneralMessage
+	        		  GeneralMessage gm = new GeneralMessage(message.getData());
 	              
-	              // Check item and add it to the list if exits
-	        	  addItemToList(gm.getContent());
+	        		  // Check item and add it to the list if exits
+	        		  addItemToList(gm.getContent());
+	        	  } else {
+	        	  	  agent.getAgentInterface().sendText2SpeechMessage("I'm sorry, you can not add new items to the shopping list now."); 
+	        	  }
 	          }
 	        });
 	
@@ -127,7 +131,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 			log("Item '"+code+"' has been successfully picked up.");
 			
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(4000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -144,10 +148,12 @@ public class ItemCollectorAgent extends AbstractAgent {
 	public State activateTrigger(AgentInterface ai, String code, String input) {
 		if (code.equals("start_collecting")) {
 			log("Start collecting trigger received.");
-			shoppingList = SimplePlanner.makeGreedyPickupPlan(shoppingList, null);
+			if (waiting)  {
+				shoppingList = SimplePlanner.makeGreedyPickupPlan(shoppingList, null);
+				waiting = false;
+				shoppingListIndex = 0;
+			}
 			
-			waiting = false;
-			shoppingListIndex = 0;
 			if (shoppingListUpdated(true)) {
 				return ai.getStateByName("collecting");
 			} else {
@@ -196,8 +202,10 @@ public class ItemCollectorAgent extends AbstractAgent {
   	  			shoppingList.add(product);
   	  			if (shoppingList.size() == 1) {
   	  				log("First item added, shopping list not empty anymore. The user can start collecting.");
-  	  				agent.getAgentInterface().changeState(agent.getAgentInterface().getStateByName("waiting_for_start_collecting"));
-  	  			} else {
+  	  				if (waiting) {
+  	  					agent.getAgentInterface().changeState(agent.getAgentInterface().getStateByName("waiting_for_start_collecting"));
+  	  				}
+  				} else {
   	  				log("Shopping list item #"+shoppingList.size()+" added.");
   				}
   	  			
