@@ -36,14 +36,6 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 		
 		
 	}
-
-	public ArrayList<Product> makePickupPlan(ArrayList<Product> shoppingList){
-		ArrayList<Product> ret = new ArrayList<>();
-		
-		
-		
-		return ret;
-	}
 	
 	public void init(String rosurl) {
 		URI rosMaster = URI.create(rosurl);
@@ -63,6 +55,9 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 
 	public boolean moveRobot(int goalX, int goalY) {
 		return goalSender.sendGoal(goalX / 100.0, goalY / 100.0);
+	}
+	public boolean gotoExit() {
+		return goalSender.sendGoal(-7.3, 8.9);
 	}
 	
 	public void stopRobot() {

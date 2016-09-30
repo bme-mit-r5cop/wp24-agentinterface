@@ -6,7 +6,7 @@
 			"name": "waiting_for_items",
 			"transitions": [
 				{ 
-					"mask": "what are you doing",
+					"mask": ".*what are you doing.*",
 					"priority" : 0,
 					"output_messages": [
 						{
@@ -21,11 +21,11 @@
 			"name": "waiting_for_start_collecting",
 			"transitions": [ 
 				{
-					"mask": "start collecting items",
+					"mask": ".*start collecting items.*",
 					"trigger" : "start_collecting"
 				},
 				{ 
-					"mask": "what are you doing",
+					"mask": ".*what are you doing.*",
 					"priority" : 0,
 					"output_messages": [
 						{
@@ -40,7 +40,7 @@
 			"name": "collecting",
 			"transitions": [
 				{
-					"mask": "what are you doing",
+					"mask": ".*what are you doing.*",
 					"priority" : 0,
 					"trigger" : "what_are_you_doing"
 				}

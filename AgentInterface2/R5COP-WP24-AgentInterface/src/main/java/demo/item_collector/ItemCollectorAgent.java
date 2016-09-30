@@ -14,6 +14,7 @@ import agentinterface.State;
 import demo.acl.Product;
 import demo.acl.ProductMessage;
 import demo.common.ProductDB;
+import simalatorInterface.SimplePlanner;
 import simalatorInterface.SimulatorInterface2;
 
 public class ItemCollectorAgent extends AbstractAgent {
@@ -125,6 +126,13 @@ public class ItemCollectorAgent extends AbstractAgent {
 			// The actual item has been picked up
 			log("Item '"+code+"' has been successfully picked up.");
 			
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+				
 			isPickupActive = false;
 			shoppingListIndex++;
 			shoppingListUpdated(false);
@@ -136,11 +144,15 @@ public class ItemCollectorAgent extends AbstractAgent {
 	public State activateTrigger(AgentInterface ai, String code, String input) {
 		if (code.equals("start_collecting")) {
 			log("Start collecting trigger received.");
+			shoppingList = SimplePlanner.makeGreedyPickupPlan(shoppingList, null);
 			
 			waiting = false;
 			shoppingListIndex = 0;
-			shoppingListUpdated(true);
-			return ai.getStateByName("collecting");
+			if (shoppingListUpdated(true)) {
+				return ai.getStateByName("collecting");
+			} else {
+				return null;
+			}
 		} else if (code.equals("what_are_you_doing")) {
 			if (isPickupActive) {
 				// Let the pickup agent handle the question
@@ -204,19 +216,19 @@ public class ItemCollectorAgent extends AbstractAgent {
 	}
 
 	
-	public void shoppingListUpdated(boolean forceLast) {
+	public boolean shoppingListUpdated(boolean forceLast) {
 		log("Shopping list update running.");
 		
 		if (waiting) {
 			// No items on the shopping list yet
 			log("No items in the list yet. Doing nothing.");
-			return;
+			return false;
 		}
 
 		if (isPickupActive) {
 			// The pickup agent is active -> let's wait for it to finish
 			log("Pickup is active. Doing nothing.");
-			return;
+			return false;
 		}
 		
 		
@@ -224,6 +236,9 @@ public class ItemCollectorAgent extends AbstractAgent {
 			log("All items have already been collected. Instructing the user to go to the cashiers.");
 			isListDone = true;
 			agent.getAgentInterface().sendText2SpeechMessage("All items have been collected. Please proceed to the cashiers to pay!");
+			smi.gotoExit();
+			agent.getAgentInterface().sendText2SpeechMessage("Thank you for shopping with us. Good bye!");
+			return true;
 		} else {
 			isListDone = false;
 			Product actual = shoppingList.get(shoppingListIndex);
@@ -231,16 +246,16 @@ public class ItemCollectorAgent extends AbstractAgent {
 			agent.getAgentInterface().sendText2SpeechMessage("Please follow me to pick up the '"+actual.getType()+"' called "+actual.getName()+".");
 			waitingForRobotMoving = true;
 			
-			
-			// TODO
-			// Trigger robot navigation to move to the location of the item:
-			// actual.getPosX()
-			// actual.getPosY()
-			//AgentInterface.safeSleep(5000);
-			smi.moveRobot(actual.getPosX(), actual.getPosY());
-			
-			// Let's assume we have arrived
-			robotArrived();
+			if (smi.moveRobot(actual.getPosX(), actual.getPosY())) {
+				// we have arrived
+				robotArrived();
+				return true;
+			} else {
+				waitingForRobotMoving = false;
+				agent.getAgentInterface().sendText2SpeechMessage("Robot navigation has been interrupted.");
+				agent.ai.changeState(agent.ai.getStateByName("waiting_for_start_collecting"));
+				return false;
+			}
 		}
 	}
 	

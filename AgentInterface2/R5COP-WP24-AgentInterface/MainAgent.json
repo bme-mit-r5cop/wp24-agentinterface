@@ -4,7 +4,7 @@
     "states": [
 		{
 			"name": "ready",
-			"transitions": [
+			"transitions-not-used": [
 				{ 
 					"mask": "go to store",
 					"trigger" : "go_to_store"

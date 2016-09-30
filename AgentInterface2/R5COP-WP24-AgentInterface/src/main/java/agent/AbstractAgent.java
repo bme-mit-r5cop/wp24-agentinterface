@@ -31,7 +31,7 @@ public class AbstractAgent implements AgentLogicInterface {
 	public static String objectName = "";
 	
 	// AgentInterface
-	AgentInterface ai;
+	public AgentInterface ai;
 	
 	
 	/**

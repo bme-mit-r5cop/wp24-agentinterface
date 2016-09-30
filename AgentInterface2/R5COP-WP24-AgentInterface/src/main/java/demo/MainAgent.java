@@ -9,6 +9,7 @@ import demo.common.ProductDB;
 import demo.item_collector.ItemCollectorAgent;
 import demo.pickup_agent.PickupAgent;
 import demo.sales_agent.SalesAgent;
+import demo.stopagent.StopAgent;
 import demo.warehouse_display.WarehouseDisplay;
 import ros_display.ROSDisplay;
 
@@ -18,6 +19,7 @@ public class MainAgent extends AbstractAgent {
 	public static ItemCollectorAgent itemCollectorAgent;
 	public static PickupAgent pickupAgent;
 	public static SalesAgent salesAgent;
+	public static StopAgent stopAgent;
 	
 	public static void main(String[] args) {
 		// Init demo main agent
@@ -41,6 +43,9 @@ public class MainAgent extends AbstractAgent {
 		
 		// Start a sales agent
 		salesAgent = SalesAgent.init(args[0]);
+		
+		// Robot stop agent
+		stopAgent = StopAgent.init(args[0]);
 		
 		processConsoleInput();
 	}
@@ -92,9 +97,14 @@ public class MainAgent extends AbstractAgent {
             	if (command.length()>4) {
 	            	String text = command.substring(5, command.length());
 	            	agent.getAgentInterface().processSpeechRecognitionMessage(text);
-	        	
             	}
-            } else if (command.startsWith("pick")) {
+        	 } else if (command.startsWith("tsay")) {
+                 if (command.length()>4) {
+     	            String text = command.substring(5, command.length());
+ 	            	stopAgent.getAgentInterface().processSpeechRecognitionMessage(text);
+                 }
+            	
+             } else if (command.startsWith("pick")) {
             	if (command.length()>4) {
 	            	String text = command.substring(5, command.length());
 	            	pickupAgent.checkPickup("R5COP-"+text);

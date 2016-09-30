@@ -6,12 +6,12 @@
 			"name": "ready",
 			"transitions": [
 				{ 
-					"mask": "what is on sale",
+					"mask": ".*what is on sale.*",
 					"priority" : 0,
 					"trigger" : "what_is_on_sale"
 				},
 				{ 
-					"mask": "yes.*",
+					"mask": "yes",
 					"priority" : 1,
 					"trigger" : "yes_to_buy"
 				},
