@@ -20,6 +20,10 @@ public class GoalSender2 {
 	boolean isMoveEnded = false;
 	boolean isMoveSuccess = false;
 
+	boolean isMovePaused = false;
+	double lastGoalX = 0;
+	double lastGoalY = 0;
+	
 	public GoalSender2(ConnectedNode cn) {
 		topic_name = "move_base_simple/goal";
 
@@ -32,21 +36,36 @@ public class GoalSender2 {
 		subscriber.addMessageListener(new MessageListener<move_base_msgs.MoveBaseActionResult>() {
 			@Override
 			public void onNewMessage(move_base_msgs.MoveBaseActionResult message) {
-				// log.info("I heard: \"" + message.getData() + "\"");
 				String result = message.getStatus().getText();
-				System.out.println("[SMI]Move result: " + result);
-				isMoveEnded = true;
-				isMoveSuccess = result.contains("Goal reached");
+				if(!isMovePaused){ //normal operation
+					
+					System.out.println("[SMI]Move result: " + result);
+					isMoveEnded = true;
+					isMoveSuccess = result.contains("Goal reached");
+				}else{
+					System.out.println("[SMI]Move result (paused): " + result);
+					isMoveEnded = false;
+				}
 			}
 		});
+	}
+	
+	public void pause() {
+		isMovePaused = true;
+		cancel();
+	}
+	public void continue() {
+		isMovePaused = false;
+		sendGoal(lastGoalX, lastGoalY, false);
 	}
 	public void cancel() {
 		actionlib_msgs.GoalID cancelmsg = connectedNode.getTopicMessageFactory().newFromType(actionlib_msgs.GoalID._TYPE);
 		cancelPublisher.publish(cancelmsg);
 		
 	}
-	public boolean sendGoal(double x, double y) {
-
+	public boolean sendGoal(double x, double y, boolean blocking) {
+		lastGoalX = x;
+		lastGoalY = y;
 		// geometry_msgs.PoseStamped goal = publisher.newMessage();
 		geometry_msgs.PoseStamped goal = connectedNode.getTopicMessageFactory()
 				.newFromType(geometry_msgs.PoseStamped._TYPE);
@@ -69,12 +88,14 @@ public class GoalSender2 {
 		System.out.println("[SMI]Goal(x=" + x + ", y=" + y + ") sent.");
 		isMoveEnded = false;
 		isMoveSuccess = false;
-		while (!isMoveEnded) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(blocking){
+			while (!isMoveEnded) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		return isMoveSuccess;

@@ -54,13 +54,20 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 	}
 
 	public boolean moveRobot(int goalX, int goalY) {
-		return goalSender.sendGoal(goalX / 100.0, goalY / 100.0);
+		return goalSender.sendGoal(goalX / 100.0, goalY / 100.0, true);
+	}
+	
+	public void pauseNavigation(){
+		goalSender.pause();
+	}
+	public void continueNavigation(){
+		goalSender.continue();
 	}
 	public boolean gotoExit() {
-		return goalSender.sendGoal(-7.3, 8.9);
+		return goalSender.sendGoal(-7.3, 8.9, true);
 	}
 	public boolean gotoStart() {
-		return goalSender.sendGoal(0, 1);
+		return goalSender.sendGoal(0, 1, true);
 	}
 	
 	public void stopRobot() {
