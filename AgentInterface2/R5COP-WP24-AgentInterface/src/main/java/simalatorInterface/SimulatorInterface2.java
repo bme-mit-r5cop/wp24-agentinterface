@@ -25,8 +25,19 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 	private long uid;
 
 	boolean started = false;
-
-	public SimulatorInterface2(String rosurl) {
+	private static SimulatorInterface2 instance = null;
+	
+	public static SimulatorInterface2 getInstance(String rosurl){
+		if(instance == null){
+			instance = new SimulatorInterface2(rosurl);
+			System.out.println("[SMI]Creating new instance.");
+		}else{
+			System.out.println("[SMI]using existing instance.");
+		}
+		return instance;
+	}
+	
+	private SimulatorInterface2(String rosurl) {
 		System.out.println("ROSURL: " + rosurl);
 		init(rosurl);
 		Random r = new Random();
@@ -61,7 +72,7 @@ public class SimulatorInterface2 extends AbstractNodeMain {
 		goalSender.pause();
 	}
 	public void continueNavigation(){
-		goalSender.continue();
+		goalSender.continueM();
 	}
 	public boolean gotoExit() {
 		return goalSender.sendGoal(-7.3, 8.9, true);

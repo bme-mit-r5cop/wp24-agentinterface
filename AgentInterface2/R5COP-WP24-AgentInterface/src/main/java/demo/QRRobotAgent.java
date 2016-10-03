@@ -26,7 +26,7 @@ public class QRRobotAgent extends AbstractAgent {
 	}
 	
 	public static void init(String rosURL) {
-		log("Initializing.");
+		System.out.println("Initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new QRRobotAgent();

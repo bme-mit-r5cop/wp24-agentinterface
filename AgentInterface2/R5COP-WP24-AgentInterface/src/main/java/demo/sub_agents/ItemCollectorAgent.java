@@ -29,7 +29,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 	static SimulatorInterface2 smi;
 	
 	public static void main(String[] args) {   
-		log("ItemCollectorAgent starting as standalone application.");
+		System.out.println("ItemCollectorAgent starting as standalone application.");
 		if (args.length != 1) {
 			System.out.println("Missing ROS URL as command line argument.");
 			System.exit(-1);
@@ -39,7 +39,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 		Scanner scanner = new Scanner(System.in);
 		String command;
 		while (true) {
-            log("-------------------------------------------");
+			System.out.println("-------------------------------------------");
             System.out.print("> ");
             command = scanner.nextLine();
             
@@ -70,7 +70,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 	
 	public static ItemCollectorAgent init(String rosURL) {
 		ItemCollectorAgent.objectName = "ItemCollectorAgent";
-		log("ItemCollectorAgent initializing.");
+		System.out.println("ItemCollectorAgent initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new ItemCollectorAgent();
@@ -82,7 +82,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 		db = new ProductDB();
 		
 		// Init simulator interface
-		smi = new SimulatorInterface2(rosURL);
+		smi = SimulatorInterface2.getInstance(rosURL);
 		
 		return agent;
 	}
@@ -167,7 +167,7 @@ public class ItemCollectorAgent extends AbstractAgent {
 				agent.getAgentInterface().sendText2SpeechMessage("I'm on my way to the next product location.");
 				return null;
 			} else if (isListDone) {
-				agent.getAgentInterface().sendText2SpeechMessage("I have finished picking up all items from your shopping list. Now I'm waiting for you to pay at a cashier, or to select new items to your shopping list.");
+				agent.getAgentInterface().sendText2SpeechMessage("I have finished picking up all items from your shopping list. Now I'm waiting for you to pay at a cashier.");
 				return null;
 			}
 			return null;

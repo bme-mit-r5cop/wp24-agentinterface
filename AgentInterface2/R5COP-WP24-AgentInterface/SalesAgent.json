@@ -11,7 +11,7 @@
 					"trigger" : "what_is_on_sale"
 				},
 				{ 
-					"mask": "yes",
+					"mask": "yes.*",
 					"priority" : 1,
 					"trigger" : "yes_to_buy"
 				},

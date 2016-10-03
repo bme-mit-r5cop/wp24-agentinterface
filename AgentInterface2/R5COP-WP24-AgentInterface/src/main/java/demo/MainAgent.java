@@ -54,7 +54,7 @@ public class MainAgent extends AbstractAgent {
 	
 	public static void init(String rosURL) {
 		ItemCollectorAgent.objectName = "DemoMainAgent";
-		log("Initializing.");
+		System.out.println("MainAgent Initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new MainAgent();

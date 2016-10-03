@@ -93,4 +93,8 @@ public class SalesAgent extends AbstractAgent {
 		// No state change possible for this agent
 		return null;
 	}
+	
+	public void reset() {
+		agent.ai.exportCurrentMasks();
+	}
 }

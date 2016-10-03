@@ -16,6 +16,8 @@ import acl.GeneralMessage;
 import agentinterface.AgentInterface;
 import agentinterface.AgentLogicInterface;
 import agentinterface.State;
+import demo.MainAgent;
+import demo.sub_agents.ItemCollectorAgent;
 
 /**
  * Example agent class using the AgentInterface interface
@@ -104,6 +106,7 @@ public class AbstractAgent implements AgentLogicInterface {
 			ai.getConnectedNode().shutdown();
 		} else if (message.getContent().equals("reset")) {
 			log("Resetting agent on ManagementMessage: "+message.getContent());
+			MainAgent.safeSleep(1000);
 			ai.resetState();
 			ai.exportCurrentMasks();
 			reset();
@@ -165,9 +168,9 @@ public class AbstractAgent implements AgentLogicInterface {
      * Display log message on stdout
      * @param message
      */
-    public static void log(String message) {
+    public void log(String message) {
         String timeStamp = new SimpleDateFormat("HH:mm:ss.SSS").format(Calendar.getInstance().getTime());
-        System.out.println("["+timeStamp+"] "+message);
+        System.out.println("["+timeStamp+"] {"+configFile+"}"+message);
     }
 
 }

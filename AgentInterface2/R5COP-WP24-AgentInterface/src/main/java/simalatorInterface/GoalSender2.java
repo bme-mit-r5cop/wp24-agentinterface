@@ -39,7 +39,7 @@ public class GoalSender2 {
 				String result = message.getStatus().getText();
 				if(!isMovePaused){ //normal operation
 					
-					System.out.println("[SMI]Move result: " + result);
+					System.out.println("[SMI]Move result (normal): " + result);
 					isMoveEnded = true;
 					isMoveSuccess = result.contains("Goal reached");
 				}else{
@@ -52,13 +52,15 @@ public class GoalSender2 {
 	
 	public void pause() {
 		isMovePaused = true;
-		cancel();
+		actionlib_msgs.GoalID cancelmsg = connectedNode.getTopicMessageFactory().newFromType(actionlib_msgs.GoalID._TYPE);
+		cancelPublisher.publish(cancelmsg);
 	}
-	public void continue() {
+	public void continueM() {
 		isMovePaused = false;
 		sendGoal(lastGoalX, lastGoalY, false);
 	}
 	public void cancel() {
+		isMovePaused = false;
 		actionlib_msgs.GoalID cancelmsg = connectedNode.getTopicMessageFactory().newFromType(actionlib_msgs.GoalID._TYPE);
 		cancelPublisher.publish(cancelmsg);
 		
@@ -96,6 +98,13 @@ public class GoalSender2 {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+		}
+		if(isMoveSuccess){
+			if(lastGoalX == x && lastGoalY == y){
+				return true;
+			} else {
+				return false;
 			}
 		}
 		return isMoveSuccess;

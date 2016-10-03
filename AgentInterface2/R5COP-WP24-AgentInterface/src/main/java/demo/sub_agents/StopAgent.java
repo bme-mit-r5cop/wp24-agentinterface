@@ -24,7 +24,7 @@ public class StopAgent extends AbstractAgent {
 	}
 	
 	public static StopAgent init(String rosURL) {
-		log("Initializing.");
+		System.out.println("StopAgent Initializing.");
 		
 		// Init ROS node and agent interface
 		agent = new StopAgent();
@@ -32,7 +32,7 @@ public class StopAgent extends AbstractAgent {
 		agent.setConfigFile("RobotStopAgent.json");
 		agent.execute();
 		
-		smi = new SimulatorInterface2(rosURL);
+		smi = SimulatorInterface2.getInstance(rosURL);
 		
 		return agent;
 	}
@@ -55,10 +55,15 @@ public class StopAgent extends AbstractAgent {
 	
 	public State activateTrigger(AgentInterface ai, String code, String input) {
 		if (code.equals("stop_robot")) {
-			smi.stopRobot();
+			smi.pauseNavigation();
+			agent.getAgentInterface().sendText2SpeechMessage("Robot stops.");
+		} else if (code.equals("continue_robot")) {
+			smi.continueNavigation();
+			agent.getAgentInterface().sendText2SpeechMessage("Robot continues.");
 		} else if (code.equals("restart_demo")) {
 			// Reset simulator
 			agent.getAgentInterface().sendText2SpeechMessage("Sending back robot to the entrance.");
+			smi.stopRobot();
 			smi.gotoStart();
 			agent.getAgentInterface().sendText2SpeechMessage("Robot has arrived to the entrance.");
 			
