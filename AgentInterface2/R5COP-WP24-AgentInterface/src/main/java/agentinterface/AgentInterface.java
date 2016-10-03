@@ -31,6 +31,7 @@ import acl.GeneralMessage;
 import acl.SubscribeMessage;
 import acl.Text2SpeechMessage;
 import agent.AbstractAgent;
+import demo.MainAgent;
 import demo.common.FileReader;
 
 
@@ -143,6 +144,7 @@ public class AgentInterface extends AbstractNodeMain{
         	new DefaultPublisherListener<std_msgs.String>() {
 				@Override
 				public void onNewSubscriber(Publisher<std_msgs.String> arg0, SubscriberIdentifier arg1) {
+					MainAgent.safeSleep(1000);
 					exportCurrentMasks();
 				}
 		});
